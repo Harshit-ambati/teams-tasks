@@ -1,0 +1,175 @@
+.home {
+  max-width: 1400px;
+  margin: 60px auto;
+  padding: 40px 0px;
+  min-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+}
+
+
+.brand {
+  font-size: 50px;
+  color: var(--text);
+  text-align: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.task-line {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.task-line.high {
+  background: linear-gradient(90deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
+  color: var(--danger);
+}
+
+.task-line.low {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+}
+
+.home-hero {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: center;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  /* color: black; Remove this to let it inherit or use var(--text) */
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-size: 4rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.hero-stats {
+  margin-top: 12px;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+.hero-stats strong {
+  color: var(--primary);
+}
+
+.hero-content p {
+  margin: 0 0 16px 0;
+  font-size: 1.25rem;
+  color: var(--muted);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-secondary {
+  background: #eef2ff;
+  color: #1f2937;
+}
+
+.hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* Needed for absolute positioning of glow if we added it, but here we might use a pseudo-element on the card or container */
+}
+
+/* Vibrant Glow Effect */
+.hero-visual::before {
+  content: '';
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  background: conic-gradient(from 180deg at 50% 50%, #ec4899 0deg, #8b5cf6 180deg, #3b82f6 360deg);
+  filter: blur(80px);
+  opacity: 0.6;
+  z-index: -1;
+  border-radius: 50%;
+}
+
+.hero-visual .card-mock {
+  /* Glassmorphism */
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.card-header {
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--primary);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background .18s ease;
+}
+
+.nav-link:hover {
+  background: rgba(102, 126, 234, 0.06);
+}
+
+
+@media (max-width: 900px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-visual {
+    order: 2;
+  }
+}

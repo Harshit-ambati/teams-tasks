@@ -1,0 +1,52 @@
+/* splash screen styles for "Teams & Tasks" app */
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  /* match home page background gradient */
+  background: linear-gradient(180deg, var(--bg), #1e293b);
+  overflow: hidden;
+  z-index: 2000; /* above everything else */
+  animation: splashFade 0.5s ease-in-out forwards;
+  animation-delay: 3s; /* fade out just as the logo finishes moving */
+}
+
+.splash-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px; /* this is the final width in navbar */
+  height: auto;
+  transform: translate(-50%, -50%) scale(4);
+  /* logo text should be white like navbar */
+  filter: brightness(0) invert(1);
+  animation: logoMove 2.5s ease-in-out forwards;
+  animation-delay: 1s;
+}
+
+@keyframes logoMove {
+  0% {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(4);
+  }
+  50% {
+    /* halfway: roughly shrink and start drifting toward nav position */
+    top: 20px;
+    left: 20px;
+    transform: translate(0, 0) scale(1.5);
+  }
+  100% {
+    /* final position inside the navbar container */
+    top: var(--splash-final-top,20px);
+    left: var(--splash-final-left,20px);
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes splashFade {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

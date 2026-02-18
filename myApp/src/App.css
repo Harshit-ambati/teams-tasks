@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.hero {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.btn {
+  padding: 10px 20px;
+  background: purple;
+  color: white;
+  text-decoration: none;
+}
+
+.login {
+  width: 300px;
+  margin: 100px auto;
+}
+
+.login input {
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+}
+
+/* Global styles moved to index.css or component specific css */

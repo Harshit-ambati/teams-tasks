@@ -1,0 +1,105 @@
+.task-stats {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--card-shadow);
+}
+
+.task-stats h3 {
+  margin: 0 0 14px 0;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.stat-card {
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  font-weight: 700;
+}
+
+.stat-card.total {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card.todo {
+  background: linear-gradient(135deg, #ffd43b 0%, #ffb347 100%);
+}
+
+.stat-card.progress {
+  background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+}
+
+.stat-card.completed {
+  background: linear-gradient(135deg, #51cf66 0%, #2f9e44 100%);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.completion-stats {
+  border-top: 2px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+.completion-rate {
+  text-align: center;
+}
+
+.rate-text {
+  margin: 0 0 8px 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.rate-value {
+  margin: 0 0 12px 0;
+  font-size: 1.6rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #eef2ff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-2) 100%);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .task-stats {
+    padding: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}
