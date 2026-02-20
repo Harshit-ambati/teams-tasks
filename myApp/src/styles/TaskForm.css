@@ -12,6 +12,31 @@
   color: var(--text);
 }
 
+.task-form-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-form-title-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5b4fc;
+}
+
+.task-form-title-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .form-group {
   margin-bottom: 18px;
 }
@@ -29,6 +54,12 @@
 .form-group textarea,
 .form-group select {
   width: 100%; padding: 10px 12px; border: 1px solid #e6e9ef; border-radius: 8px; font-size: 0.95rem; font-family: inherit; transition: all 0.18s ease; box-sizing: border-box;
+}
+
+.form-group select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #f8fafc;
 }
 
 .form-group input[type='text']:focus,

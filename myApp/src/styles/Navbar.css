@@ -3,8 +3,12 @@
   top: 0;
   left: 0;
   width: 100%;
-  background: transparent;
-  padding: 0px 20px;
+  height: 84px;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0px 16px;
+  overflow: hidden;
   z-index: 1000;
 }
 
@@ -17,6 +21,7 @@
 /* make inner container flex with space-between so logo is left, links right */
 .navbar-inner {
   display: flex;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -37,7 +42,7 @@
 
 /* logo image inside brand */
 .brand .logo {
-  height: 160px; /* further increased size */
+  height: 132px;
   width: auto;
   display: block;
 

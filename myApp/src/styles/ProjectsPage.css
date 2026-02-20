@@ -1,0 +1,259 @@
+.projects-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 100px 24px 40px;
+}
+
+.projects-page .projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.projects-page .projects-header h2 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+}
+
+.projects-page .projects-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.projects-page .projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.projects-page .project-card {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.projects-page .project-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.projects-page .project-header h4 {
+  margin: 0;
+}
+
+.projects-page .project-desc {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.projects-page .project-members {
+  margin: 10px 0 12px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.projects-page .status-badge {
+  font-size: 0.68rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+}
+
+.projects-page .status-badge.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.projects-page .status-badge.planning {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.projects-page .status-badge.completed {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+.projects-page .progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.projects-page .progress-bar-bg {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.projects-page .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+}
+
+.projects-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.projects-page .btn-primary {
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+  color: #fff;
+}
+
+.projects-page .btn-secondary {
+  background: rgba(148, 163, 184, 0.15);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.projects-page .btn-sm {
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
+.projects-page .btn-block {
+  width: 100%;
+}
+
+.projects-page .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.projects-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.projects-modal-content {
+  width: min(560px, 100%);
+  background: var(--surface);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 22px;
+}
+
+.projects-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.projects-modal-header h3 {
+  margin: 0;
+}
+
+.projects-close-btn {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.projects-form-group {
+  margin-bottom: 14px;
+}
+
+.projects-form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.projects-form-group input,
+.projects-form-group textarea,
+.projects-form-group select {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #fff;
+  padding: 11px 12px;
+}
+
+.projects-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.projects-page .inline-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.projects-page .team-list {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 14px;
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.projects-page .team-empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.projects-page .team-member-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.35);
+  border-radius: 10px;
+}
+
+.projects-page .team-member-name {
+  margin: 0 0 2px;
+}
+
+.projects-page .team-member-role {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+@media (max-width: 768px) {
+  .projects-page {
+    padding: 88px 16px 28px;
+  }
+
+  .projects-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

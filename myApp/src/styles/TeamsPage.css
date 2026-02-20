@@ -1,0 +1,138 @@
+.teams-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 24px 40px;
+}
+
+.teams-page .teams-header h2 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+}
+
+.teams-page .teams-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.teams-page .teams-layout {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+}
+
+.teams-page .team-form-card,
+.teams-page .team-list-card {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.teams-page .team-form-card h3,
+.teams-page .team-list-card h3 {
+  margin: 0 0 14px;
+}
+
+.teams-page .form-group {
+  margin-bottom: 12px;
+}
+
+.teams-page .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.teams-page .form-group input {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #fff;
+  padding: 11px 12px;
+}
+
+.teams-page .member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.teams-page .member-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.teams-page .member-name {
+  margin: 0 0 2px;
+  font-weight: 600;
+}
+
+.teams-page .member-role {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.teams-page .member-projects {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+}
+
+.teams-page .empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.teams-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.teams-page .btn-primary {
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+  color: #fff;
+}
+
+.teams-page .btn-secondary {
+  background: rgba(148, 163, 184, 0.15);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.teams-page .btn-sm {
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
+.teams-page .btn-block {
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .teams-page .teams-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .teams-page {
+    padding: 88px 16px 28px;
+  }
+}

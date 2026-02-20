@@ -88,6 +88,22 @@
   animation: checkboxPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.checkbox-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke: #fff;
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 @keyframes checkboxPop {
   0% {
     transform: scale(1);
@@ -225,6 +241,16 @@
 .due-date.overdue {
   color: #ef4444;
   background: #fef2f2;
+}
+
+.assignee-badge {
+  font-size: 0.8rem;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 600;
 }
 
 .overdue-warning {

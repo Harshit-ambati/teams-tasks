@@ -11,6 +11,31 @@
   color: var(--text);
 }
 
+.stats-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5b4fc;
+}
+
+.title-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -1,5 +1,17 @@
 import '../styles/TaskStats.css';
 
+function ChartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 19V5" />
+      <path d="M20 19H4" />
+      <path d="M8 16V11" />
+      <path d="M12 16V8" />
+      <path d="M16 16V6" />
+    </svg>
+  );
+}
+
 export default function TaskStats({ stats }) {
   const total = Object.values(stats).reduce((sum, arr) => sum + arr.length, 0);
   const completionRate =
@@ -7,7 +19,12 @@ export default function TaskStats({ stats }) {
 
   return (
     <div className="task-stats">
-      <h3>📊 Overview</h3>
+      <h3 className="stats-title">
+        <span className="title-icon">
+          <ChartIcon />
+        </span>
+        Overview
+      </h3>
       <div className="stats-grid">
         <div className="stat-card total">
           <div className="stat-value">{total}</div>

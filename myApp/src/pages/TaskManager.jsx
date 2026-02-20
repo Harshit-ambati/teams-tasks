@@ -4,15 +4,27 @@ import TaskList from '../components/TaskList';
 import TaskStats from '../components/TaskStats';
 import '../styles/TaskManager.css';
 import { TaskContext } from '../context/TaskContext';
+import { ProjectContext } from '../context/ProjectContext';
 
 export default function TaskManager() {
   const { tasks, addTask, updateTask, deleteTask, toggleTaskStatus, toggleTaskCompletion } =
     useContext(TaskContext);
-  const [filter, setFilter] = useState('all'); // all, todo, in-progress, completed
+  const { projects } = useContext(ProjectContext);
+  const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingTask, setEditingTask] = useState(null);
 
-  const filteredTasks = tasks.filter((task) => {
+  const tasksWithAssignee = tasks.map((task) => {
+    const project = projects.find((item) => item.id === task.projectId);
+    const assignedMember = project?.members?.find((member) => member.id === task.assignedTo);
+
+    return {
+      ...task,
+      assignedMemberName: assignedMember?.name || '',
+    };
+  });
+
+  const filteredTasks = tasksWithAssignee.filter((task) => {
     const matchesFilter = filter === 'all' || task.status === filter;
     const matchesSearch =
       task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -29,7 +41,7 @@ export default function TaskManager() {
   return (
     <div className="task-manager-container">
       <header className="task-manager-header">
-        <h1>📋 Project Management Tool</h1>
+        <h1>Project Management Tool</h1>
         <p>Manage and track your tasks efficiently</p>
       </header>
 
@@ -37,9 +49,8 @@ export default function TaskManager() {
         <aside className="task-manager-sidebar">
           <TaskForm
             key={editingTask ? editingTask.id : 'new'}
-            onSubmit={
-              editingTask ? (data) => updateTask(editingTask.id, data) : addTask
-            }
+            projects={projects}
+            onSubmit={editingTask ? (data) => updateTask(editingTask.id, data) : addTask}
             initialTask={editingTask}
             onCancel={() => setEditingTask(null)}
           />
@@ -50,7 +61,7 @@ export default function TaskManager() {
           <div className="task-manager-controls">
             <input
               type="text"
-              placeholder="🔍 Search tasks..."
+              placeholder="Search tasks..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -78,7 +89,7 @@ export default function TaskManager() {
 
           {filteredTasks.length === 0 && (
             <div className="empty-state">
-              <p>📭 No tasks found. Create one to get started!</p>
+              <p>No tasks found. Create one to get started.</p>
             </div>
           )}
         </main>

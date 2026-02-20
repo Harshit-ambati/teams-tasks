@@ -2,11 +2,17 @@ import { createContext, useState, useEffect } from 'react';
 
 export const TaskContext = createContext();
 
+const normalizeTask = (task) => ({
+  ...task,
+  projectId: task.projectId || '',
+  assignedTo: task.assignedTo || '',
+});
+
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState(() => {
     try {
       const saved = localStorage.getItem('tasks');
-      return saved ? JSON.parse(saved) : [];
+      return saved ? JSON.parse(saved).map(normalizeTask) : [];
     } catch (e) {
       return [];
     }
@@ -18,13 +24,13 @@ export function TaskProvider({ children }) {
   }, [tasks]);
 
   const addTask = (taskData) => {
-    const newTask = {
+    const newTask = normalizeTask({
       id: Date.now(),
       ...taskData,
       status: 'todo',
       createdAt: new Date().toISOString(),
       completedAt: null,
-    };
+    });
     setTasks((prev) => [newTask, ...prev]);
   };
 
@@ -32,14 +38,14 @@ export function TaskProvider({ children }) {
     setTasks((prev) =>
       prev.map((task) =>
         task.id === id
-          ? {
-            ...task,
-            ...updates,
-            completedAt:
-              updates.status === 'completed' && task.status !== 'completed'
-                ? new Date().toISOString()
-                : task.completedAt,
-          }
+          ? normalizeTask({
+              ...normalizeTask(task),
+              ...updates,
+              completedAt:
+                updates.status === 'completed' && task.status !== 'completed'
+                  ? new Date().toISOString()
+                  : task.completedAt,
+            })
           : task
       )
     );

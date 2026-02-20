@@ -14,6 +14,8 @@ export default function Navbar() {
 
         <nav className="nav-links">
           <Link to="/dashboard" className="nav-link">Dashboard</Link>
+          <Link to="/projects" className="nav-link">Projects</Link>
+          <Link to="/teams" className="nav-link">Teams</Link>
           <Link to="/tasks" className="nav-link">Tasks</Link>
           <Link to="/signup" className="nav-link">Sign up</Link>
           <Link to="/login" className="nav-link nav-cta">Login</Link>
