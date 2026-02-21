@@ -1,8 +1,8 @@
 @font-face {
   font-family: 'Fire Blaze';
   src: local('Fire Blaze'), local('FireBlaze'),
-    url('/src/assets/FireBlaze.otf') format('opentype'),
-    url('./assets/FireBlaze.otf') format('opentype');
+    url('/src/assets/FAST BLAZE.otf') format('opentype'),
+    url('./assets/FAST BLAZE.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
