@@ -38,10 +38,12 @@
 
 .projects-page .project-card {
   --card-glow: rgba(148, 163, 184, 0.32);
-  background: var(--surface);
+  background: rgba(30, 41, 59, 0.66);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 18px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 

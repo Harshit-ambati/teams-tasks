@@ -67,10 +67,12 @@
 
 .dashboard-container .card {
   --card-glow: rgba(129, 140, 248, 0.28);
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(30, 41, 59, 0.62);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 
@@ -100,10 +102,12 @@
 
 .dashboard-container .project-card {
   --card-glow: rgba(148, 163, 184, 0.3);
-  background: var(--surface);
+  background: rgba(30, 41, 59, 0.66);
   border-radius: 14px;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 
@@ -196,10 +200,12 @@
 
 .dashboard-container .team-summary-card {
   --card-glow: rgba(129, 140, 248, 0.28);
-  background: var(--surface);
+  background: rgba(30, 41, 59, 0.64);
   border-radius: 14px;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 
@@ -227,10 +233,12 @@
 
 .dashboard-container .panel-card {
   --card-glow: rgba(129, 140, 248, 0.24);
-  background: var(--surface);
+  background: rgba(30, 41, 59, 0.68);
   border-radius: 16px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 

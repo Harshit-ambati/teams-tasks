@@ -1,8 +1,11 @@
 .task-stats {
-  background: var(--surface);
+  background: rgba(30, 41, 59, 0.64);
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--card-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .task-stats h3 {
