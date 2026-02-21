@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.png"; 
 import "../styles/Navbar.css";
 
-export default function Navbar() {
+export default function Navbar({ className = "" }) {
   return (
-    <header className="app-navbar">
+    <header className={`app-navbar ${className}`.trim()}>
       <div className="container navbar-inner">
         <div className="brand-wrap">
           <Link to="/" className="brand">
-            <img src={logo} alt="Teams & Tasks" className="logo" />
+            <img src={logo} alt="Teams & Tasks" className="logo" data-splash-target="logo" />
           </Link>
         </div>
 

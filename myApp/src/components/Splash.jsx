@@ -1,38 +1,44 @@
-import React, { useEffect } from "react";
-import logo from "../assets/logo.png";
-import "../styles/Splash.css";
+import React, { useEffect } from 'react';
+import logo from '../assets/logo.png';
+import '../styles/Splash.css';
 
-/**
- * A full‑screen splash animation shown once when the app first loads.
- * After the animation completes the parent should unmount the component.
- */
-export default function Splash({ onFinish }) {
+export default function Splash({ onComplete }) {
   useEffect(() => {
-    // compute final navbar logo position and expose as CSS vars
-    const logoEl = document.querySelector('.app-navbar .logo');
-    if (logoEl) {
-      const rect = logoEl.getBoundingClientRect();
-      document.documentElement.style.setProperty(
-        '--splash-final-top',
-        `${rect.top}px`
-      );
-      document.documentElement.style.setProperty(
-        '--splash-final-left',
-        `${rect.left}px`
-      );
-    }
+    let timer;
 
-    // total duration must cover the delay + animation + fade‑out buffer
-    const TOTAL = 3000;
-    const timer = setTimeout(() => {
-      if (onFinish) onFinish();
-    }, TOTAL);
+    const measureTarget = () => {
+      const logoEl = document.querySelector('[data-splash-target="logo"]');
+      if (!logoEl) return;
+
+      const rect = logoEl.getBoundingClientRect();
+      const targetCenterX = rect.left + rect.width / 2;
+      const targetCenterY = rect.top + rect.height / 2;
+      const viewportCenterX = window.innerWidth / 2;
+      const viewportCenterY = window.innerHeight / 2;
+
+      const deltaX = targetCenterX - viewportCenterX;
+      const deltaY = targetCenterY - viewportCenterY;
+
+      document.documentElement.style.setProperty('--splash-dx', `${deltaX}px`);
+      document.documentElement.style.setProperty('--splash-dy', `${deltaY}px`);
+      document.documentElement.style.setProperty('--splash-target-width', `${rect.width}px`);
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(measureTarget);
+    });
+
+    timer = setTimeout(() => {
+      if (onComplete) onComplete();
+    }, 2600);
+
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, [onComplete]);
 
   return (
     <div className="splash-screen">
       <img src={logo} alt="Teams & Tasks" className="splash-logo" />
+      <div className="splash-vignette" />
     </div>
   );
 }

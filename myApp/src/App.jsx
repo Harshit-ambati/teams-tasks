@@ -13,38 +13,29 @@ import Splash from "./components/Splash";
 import Navbar from "./components/Navbar";
 import './App.css';
 
-function ConditionalNavbar() {
-  return <Navbar className="app-navbar" />;
+function ConditionalNavbar({ splashActive }) {
+  return <Navbar className={splashActive ? "splash-hidden" : ""} />;
 }
 
 function App() {
   const [showSplash, setShowSplash] = React.useState(true);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 3300);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (showSplash) {
-    return <Splash onComplete={() => setShowSplash(false)} />;
-  }
 
   return (
     <TaskProvider>
       <ProjectProvider>
         <BrowserRouter>
           <div className="app">
-            <ConditionalNavbar />
-            <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/dashboard" element={<Dashboard />} />
-  <Route path="/projects" element={<ProjectsPage />} />
-  <Route path="/teams" element={<TeamsPage />} />
-  <Route path="/tasks" element={<TaskManager />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/signup" element={<Signup />} />
-</Routes>
-
+            <ConditionalNavbar splashActive={showSplash} />
+            {showSplash && <Splash onComplete={() => setShowSplash(false)} />}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/teams" element={<TeamsPage />} />
+                <Route path="/tasks" element={<TaskManager />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+              </Routes>
           </div>
         </BrowserRouter>
       </ProjectProvider>

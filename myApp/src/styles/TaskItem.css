@@ -1,4 +1,5 @@
 .task-item {
+  --task-glow: rgba(148, 163, 184, 0.28);
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -25,9 +26,10 @@
 
 .task-item:hover {
   transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01),
+    0 0 36px var(--task-glow);
   background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(255, 255, 255, 0.8);
+  border-color: var(--task-glow);
 }
 
 .task-todo::before {
@@ -40,6 +42,18 @@
 
 .task-completed::before {
   background: #34d399;
+}
+
+.task-item.task-todo {
+  --task-glow: rgba(251, 191, 36, 0.32);
+}
+
+.task-item.task-in-progress {
+  --task-glow: rgba(96, 165, 250, 0.32);
+}
+
+.task-item.task-completed {
+  --task-glow: rgba(52, 211, 153, 0.3);
 }
 
 .task-header {
@@ -272,6 +286,16 @@
 
   .task-actions {
     opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task-item {
+    transition: none;
+  }
+
+  .task-item:hover {
     transform: none;
   }
 }

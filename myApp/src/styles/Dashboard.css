@@ -1,7 +1,15 @@
 .dashboard-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 100px 24px 40px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 65px 24px 40px;
+  min-height: calc(100vh - 60px);
+  background:
+    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+  background-color: #0f172a;
+  border-radius: 0;
 }
 
 .dashboard-grid {
@@ -58,10 +66,18 @@
 }
 
 .dashboard-container .card {
+  --card-glow: rgba(129, 140, 248, 0.28);
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 16px;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.dashboard-container .card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-glow);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.32), 0 0 32px var(--card-glow);
 }
 
 .dashboard-container .card h4 {
@@ -83,10 +99,30 @@
 }
 
 .dashboard-container .project-card {
+  --card-glow: rgba(148, 163, 184, 0.3);
   background: var(--surface);
   border-radius: 14px;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.dashboard-container .project-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-glow);
+  box-shadow: 0 16px 36px rgba(2, 6, 23, 0.36), 0 0 36px var(--card-glow);
+}
+
+.dashboard-container .project-card.active {
+  --card-glow: rgba(16, 185, 129, 0.34);
+}
+
+.dashboard-container .project-card.planning {
+  --card-glow: rgba(59, 130, 246, 0.34);
+}
+
+.dashboard-container .project-card.completed {
+  --card-glow: rgba(148, 163, 184, 0.3);
 }
 
 .dashboard-container .project-header {
@@ -159,10 +195,18 @@
 }
 
 .dashboard-container .team-summary-card {
+  --card-glow: rgba(129, 140, 248, 0.28);
   background: var(--surface);
   border-radius: 14px;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.dashboard-container .team-summary-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-glow);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.32), 0 0 30px var(--card-glow);
 }
 
 .dashboard-container .team-summary-card p {
@@ -182,10 +226,18 @@
 }
 
 .dashboard-container .panel-card {
+  --card-glow: rgba(129, 140, 248, 0.24);
   background: var(--surface);
   border-radius: 16px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.dashboard-container .panel-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-glow);
+  box-shadow: 0 14px 32px rgba(2, 6, 23, 0.34), 0 0 28px var(--card-glow);
 }
 
 .dashboard-container .panel-card h3 {
@@ -289,5 +341,21 @@
 @media (max-width: 700px) {
   .dashboard-container {
     padding: 88px 16px 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-container .card,
+  .dashboard-container .project-card,
+  .dashboard-container .team-summary-card,
+  .dashboard-container .panel-card {
+    transition: none;
+  }
+
+  .dashboard-container .card:hover,
+  .dashboard-container .project-card:hover,
+  .dashboard-container .team-summary-card:hover,
+  .dashboard-container .panel-card:hover {
+    transform: none;
   }
 }

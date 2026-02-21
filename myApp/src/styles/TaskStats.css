@@ -44,26 +44,37 @@
 }
 
 .stat-card {
+  --stat-glow: rgba(148, 163, 184, 0.22);
   padding: 12px;
   border-radius: 10px;
   text-align: center;
   color: white;
   font-weight: 700;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.24), 0 0 24px var(--stat-glow);
 }
 
 .stat-card.total {
+  --stat-glow: rgba(118, 75, 162, 0.3);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .stat-card.todo {
+  --stat-glow: rgba(251, 191, 36, 0.3);
   background: linear-gradient(135deg, #ffd43b 0%, #ffb347 100%);
 }
 
 .stat-card.progress {
+  --stat-glow: rgba(77, 171, 247, 0.3);
   background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
 }
 
 .stat-card.completed {
+  --stat-glow: rgba(81, 207, 102, 0.28);
   background: linear-gradient(135deg, #51cf66 0%, #2f9e44 100%);
 }
 
@@ -126,5 +137,15 @@
 
   .stat-value {
     font-size: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card {
+    transition: none;
+  }
+
+  .stat-card:hover {
+    transform: none;
   }
 }

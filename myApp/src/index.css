@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'Fire Blaze';
+  src: local('Fire Blaze'), local('FireBlaze'),
+    url('/src/assets/FireBlaze.otf') format('opentype'),
+    url('./assets/FireBlaze.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg: #0f172a;
   --surface: #1e293b;
@@ -9,11 +19,13 @@
   --success: #51cf66;
   --danger: #ff6b6b;
   --radius: 12px;
-  --card-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  
+  --font-gaming: 'Minecraft', monospace;
 }
 
 * {
   box-sizing: border-box;
+  font-family: var(--font-gaming);
 }
 
 html,
@@ -22,10 +34,14 @@ body,
   height: 100%;
 }
 
+html {
+  font-family: var(--font-gaming);
+}
+
 body {
   margin: 0;
   padding-top: 60px; /* offset fixed navbar height */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-family: var(--font-gaming);
   background: linear-gradient(180deg, var(--bg), #1e293b);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -42,7 +58,13 @@ a:hover {
 }
 
 button {
-  font-family: inherit;
+  font-family: var(--font-gaming);
+}
+
+input,
+textarea,
+select {
+  font-family: var(--font-gaming);
 }
 
 /* Utility container */

@@ -1,7 +1,15 @@
 .projects-page {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 100px 24px 40px;
+  min-height: calc(100vh - 60px);
+  background:
+    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+  background-color: #0f172a;
+  border-radius: 0;
 }
 
 .projects-page .projects-header {
@@ -29,10 +37,30 @@
 }
 
 .projects-page .project-card {
+  --card-glow: rgba(148, 163, 184, 0.32);
   background: var(--surface);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 18px;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.projects-page .project-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-glow);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.38), 0 0 40px var(--card-glow);
+}
+
+.projects-page .project-card.active {
+  --card-glow: rgba(16, 185, 129, 0.36);
+}
+
+.projects-page .project-card.planning {
+  --card-glow: rgba(59, 130, 246, 0.36);
+}
+
+.projects-page .project-card.completed {
+  --card-glow: rgba(148, 163, 184, 0.32);
 }
 
 .projects-page .project-header {
@@ -255,5 +283,15 @@
   .projects-header {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-page .project-card {
+    transition: none;
+  }
+
+  .projects-page .project-card:hover {
+    transform: none;
   }
 }

@@ -1,10 +1,17 @@
 .home {
-  max-width: 1400px;
-  margin: 60px auto;
-  padding: 40px 0px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 110px 24px 40px;
   min-height: calc(100vh - 32px);
   display: flex;
   flex-direction: column;
+  background:
+    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+  background-color: #0f172a;
+  border-radius: 0;
 }
 
 
@@ -41,6 +48,7 @@
   gap: 24px;
   align-items: center;
 }
+
 
 .hero-content {
   display: flex;
@@ -165,6 +173,10 @@
 
 
 @media (max-width: 900px) {
+  .home {
+    padding: 92px 16px 24px;
+  }
+
   .home-hero {
     grid-template-columns: 1fr;
   }
@@ -172,4 +184,5 @@
   .hero-visual {
     order: 2;
   }
+
 }
