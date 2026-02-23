@@ -3,8 +3,8 @@ import TaskForm from '../components/TaskForm';
 import TaskList from '../components/TaskList';
 import TaskStats from '../components/TaskStats';
 import '../styles/TaskManager.css';
-import { TaskContext } from '../context/TaskContext';
-import { ProjectContext } from '../context/ProjectContext';
+import TaskContext from '../context/TaskContextObject';
+import ProjectContext from '../context/ProjectContextObject';
 
 export default function TaskManager() {
   const { tasks, addTask, updateTask, deleteTask, toggleTaskStatus, toggleTaskCompletion } =

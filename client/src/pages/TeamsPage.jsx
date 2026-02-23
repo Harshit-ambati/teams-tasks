@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from 'react';
 import '../styles/TeamsPage.css';
-import { ProjectContext } from '../context/ProjectContext';
+import ProjectContext from '../context/ProjectContextObject';
 import { ALL_TEAM_TYPES, DEFAULT_TEAM_TYPE, TEAM_TYPES, getTeamTypeMeta } from '../constants/teamTypes';
 
 function CreateTeamModal({ onClose, onCreate }) {

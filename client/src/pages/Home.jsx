@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Home.css';
-import { TaskContext } from '../context/TaskContext';
+import TaskContext from '../context/TaskContextObject';
 
 function Home() {
   const { tasks } = useContext(TaskContext);

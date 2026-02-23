@@ -1,7 +1,6 @@
-import { createContext, useMemo, useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { DEFAULT_TEAM_TYPE, isValidTeamType } from '../constants/teamTypes';
-
-export const ProjectContext = createContext();
+import ProjectContext from './ProjectContextObject';
 
 const defaultTeamMembers = [
   { id: 'm1', name: 'Alex Carter', role: 'Product Manager' },
@@ -116,7 +115,7 @@ const loadInitialTeamMembers = () => {
   try {
     const saved = localStorage.getItem('teamMembers');
     if (saved) return JSON.parse(saved).map(normalizeMember);
-  } catch (e) {
+  } catch {
     // ignore malformed local storage
   }
   return defaultTeamMembers;
@@ -127,7 +126,7 @@ const loadInitialTeams = () => {
     const saved = localStorage.getItem('teams');
     const parsed = saved ? JSON.parse(saved) : defaultTeams;
     return parsed.map(normalizeTeam).filter((team) => team.name);
-  } catch (e) {
+  } catch {
     return defaultTeams.map(normalizeTeam);
   }
 };
@@ -137,15 +136,39 @@ const loadInitialProjects = (seedMembers) => {
     const saved = localStorage.getItem('projects');
     const parsedProjects = saved ? JSON.parse(saved) : defaultProjects;
     return parsedProjects.map((project) => normalizeProject(project, seedMembers));
-  } catch (e) {
+  } catch {
     return defaultProjects.map((project) => normalizeProject(project, seedMembers));
   }
 };
 
+const buildInitialState = () => {
+  const storedTeamMembers = loadInitialTeamMembers();
+  const projects = loadInitialProjects(storedTeamMembers);
+  const teams = loadInitialTeams();
+  const projectMembers = getUniqueMembersFromProjects(projects);
+  const memberMap = new Map();
+
+  [...storedTeamMembers, ...projectMembers].forEach((member) => {
+    const normalized = normalizeMember(member);
+    if (!normalized.name.trim()) return;
+    memberMap.set(normalized.id, normalized);
+  });
+
+  const teamMembers = [...memberMap.values()];
+  const validMemberIds = new Set(teamMembers.map((member) => member.id));
+  const sanitizedTeams = teams.map((team) => ({
+    ...team,
+    memberIds: team.memberIds.filter((memberId) => validMemberIds.has(memberId)),
+  }));
+
+  return { projects, teams: sanitizedTeams, teamMembers };
+};
+
 export function ProjectProvider({ children }) {
-  const [teamMembers, setTeamMembers] = useState(loadInitialTeamMembers);
-  const [projects, setProjects] = useState(() => loadInitialProjects(loadInitialTeamMembers()));
-  const [teams, setTeams] = useState(loadInitialTeams);
+  const [initialState] = useState(buildInitialState);
+  const [projects, setProjects] = useState(initialState.projects);
+  const [teams, setTeams] = useState(initialState.teams);
+  const [teamMembers, setTeamMembers] = useState(initialState.teamMembers);
 
   const [activities, setActivities] = useState([
     { id: 1, user: 'Alex', action: 'completed a task', target: 'Homepage Hero', time: '2h ago' },
@@ -153,17 +176,6 @@ export function ProjectProvider({ children }) {
     { id: 3, user: 'You', action: 'created a project', target: 'Marketing Campaign', time: '1d ago' },
     { id: 4, user: 'Alex', action: 'updated status', target: 'API Integration', time: '1d ago' },
   ]);
-
-  useEffect(() => {
-    const uniqueFromProjects = getUniqueMembersFromProjects(projects);
-    setTeamMembers((prev) => {
-      const map = new Map(prev.map((member) => [member.id, member]));
-      uniqueFromProjects.forEach((member) => {
-        if (!map.has(member.id)) map.set(member.id, member);
-      });
-      return [...map.values()];
-    });
-  }, [projects]);
 
   useEffect(() => {
     localStorage.setItem('projects', JSON.stringify(projects));
@@ -176,16 +188,6 @@ export function ProjectProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('teams', JSON.stringify(teams));
   }, [teams]);
-
-  useEffect(() => {
-    const validMemberIds = new Set(teamMembers.map((member) => member.id));
-    setTeams((prev) =>
-      prev.map((team) => ({
-        ...team,
-        memberIds: team.memberIds.filter((memberId) => validMemberIds.has(memberId)),
-      }))
-    );
-  }, [teamMembers]);
 
   const addActivity = (activity) => {
     setActivities((prev) => [{ id: Date.now(), time: 'Just now', ...activity }, ...prev]);
@@ -260,12 +262,12 @@ export function ProjectProvider({ children }) {
   };
 
   const removeTeamMember = (memberId) => {
-    const normalizedMemberId = String(memberId);
-    setTeamMembers((prev) => prev.filter((member) => member.id !== memberId));
+    const normalizedMemberId = String(memberId || '');
+    setTeamMembers((prev) => prev.filter((member) => member.id !== normalizedMemberId));
     setProjects((prev) =>
       prev.map((project) => ({
         ...project,
-        members: project.members.filter((member) => member.id !== memberId),
+        members: project.members.filter((member) => member.id !== normalizedMemberId),
       }))
     );
     setTeams((prev) =>
@@ -306,26 +308,23 @@ export function ProjectProvider({ children }) {
   const getMemberProjectCount = (memberId) =>
     projects.filter((project) => project.members.some((member) => member.id === memberId)).length;
 
-  const value = useMemo(
-    () => ({
-      projects,
-      teams,
-      teamMembers,
-      activities,
-      addProject,
-      deleteProject,
-      addTeam,
-      removeTeam,
-      addMemberToTeam,
-      removeMemberFromTeam,
-      addTeamMember,
-      removeTeamMember,
-      addMemberToProject,
-      removeMemberFromProject,
-      getMemberProjectCount,
-    }),
-    [projects, teams, teamMembers, activities]
-  );
+  const value = {
+    projects,
+    teams,
+    teamMembers,
+    activities,
+    addProject,
+    deleteProject,
+    addTeam,
+    removeTeam,
+    addMemberToTeam,
+    removeMemberFromTeam,
+    addTeamMember,
+    removeTeamMember,
+    addMemberToProject,
+    removeMemberFromProject,
+    getMemberProjectCount,
+  };
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
 }

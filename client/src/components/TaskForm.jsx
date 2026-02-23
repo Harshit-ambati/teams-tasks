@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import '../styles/TaskForm.css';
 
 function EditIcon() {
@@ -32,14 +32,7 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
   const [errors, setErrors] = useState({});
   const selectedProject = projects.find((project) => project.id === formData.projectId);
   const teamMembers = selectedProject?.members || [];
-
-  useEffect(() => {
-    if (!formData.assignedTo) return;
-    const memberExists = teamMembers.some((member) => member.id === formData.assignedTo);
-    if (!memberExists) {
-      setFormData((prev) => ({ ...prev, assignedTo: '' }));
-    }
-  }, [formData.assignedTo, teamMembers]);
+  const isAssignedMemberValid = teamMembers.some((member) => member.id === formData.assignedTo);
 
   const validateForm = () => {
     const newErrors = {};
@@ -71,7 +64,10 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(formData);
+      onSubmit({
+        ...formData,
+        assignedTo: isAssignedMemberValid ? formData.assignedTo : '',
+      });
       setFormData({
         title: '',
         description: '',
@@ -168,7 +164,7 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
             <select
               id="assignedTo"
               name="assignedTo"
-              value={formData.assignedTo}
+              value={isAssignedMemberValid ? formData.assignedTo : ''}
               onChange={handleChange}
               disabled={!formData.projectId || teamMembers.length === 0}
             >

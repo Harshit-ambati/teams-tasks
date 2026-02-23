@@ -26,8 +26,8 @@
 
 .task-item:hover {
   transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 18px 30px rgba(2, 6, 23, 0.35),
-    0 0 36px var(--task-glow);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px var(--task-glow), 0 0 62px var(--task-glow);
   background: rgba(30, 41, 59, 0.76);
   border-color: var(--task-glow);
 }

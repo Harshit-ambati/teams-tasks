@@ -79,7 +79,8 @@
 .dashboard-container .card:hover {
   transform: translateY(-3px);
   border-color: var(--card-glow);
-  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.32), 0 0 32px var(--card-glow);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px var(--card-glow), 0 0 62px var(--card-glow);
 }
 
 .dashboard-container .card h4 {
@@ -114,7 +115,8 @@
 .dashboard-container .project-card:hover {
   transform: translateY(-4px);
   border-color: var(--card-glow);
-  box-shadow: 0 16px 36px rgba(2, 6, 23, 0.36), 0 0 36px var(--card-glow);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px var(--card-glow), 0 0 62px var(--card-glow);
 }
 
 .dashboard-container .project-card.active {
@@ -212,7 +214,8 @@
 .dashboard-container .team-summary-card:hover {
   transform: translateY(-3px);
   border-color: var(--card-glow);
-  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.32), 0 0 30px var(--card-glow);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px var(--card-glow), 0 0 62px var(--card-glow);
 }
 
 .dashboard-container .team-summary-card p {
@@ -245,7 +248,8 @@
 .dashboard-container .panel-card:hover {
   transform: translateY(-3px);
   border-color: var(--card-glow);
-  box-shadow: 0 14px 32px rgba(2, 6, 23, 0.34), 0 0 28px var(--card-glow);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px var(--card-glow), 0 0 62px var(--card-glow);
 }
 
 .dashboard-container .panel-card h3 {

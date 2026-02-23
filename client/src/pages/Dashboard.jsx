@@ -1,8 +1,8 @@
 import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Dashboard.css';
-import { TaskContext } from '../context/TaskContext';
-import { ProjectContext } from '../context/ProjectContext';
+import TaskContext from '../context/TaskContextObject';
+import ProjectContext from '../context/ProjectContextObject';
 
 function Dashboard() {
   const { tasks } = useContext(TaskContext);

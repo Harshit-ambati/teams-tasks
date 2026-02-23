@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import '../styles/ProjectsPage.css';
-import { ProjectContext } from '../context/ProjectContext';
+import ProjectContext from '../context/ProjectContextObject';
 
 function NewProjectModal({ onClose, onCreate }) {
   const [title, setTitle] = useState('');

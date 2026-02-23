@@ -1,12 +1,14 @@
 import '../styles/TaskItem.css';
 
-export default function TaskItem({ task, onToggleStatus, onToggleCompletion, onEdit, onDelete }) {
-  const CheckIcon = () => (
+function CheckIcon() {
+  return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M5 12l5 5 9-9" />
     </svg>
   );
+}
 
+export default function TaskItem({ task, onToggleStatus, onToggleCompletion, onEdit, onDelete }) {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high':

@@ -50,7 +50,8 @@
 .projects-page .project-card:hover {
   transform: translateY(-4px);
   border-color: var(--card-glow);
-  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.38), 0 0 40px var(--card-glow);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px var(--card-glow), 0 0 62px var(--card-glow);
 }
 
 .projects-page .project-card.active {

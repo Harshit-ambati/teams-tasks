@@ -1,6 +1,5 @@
-import { createContext, useState, useEffect } from 'react';
-
-export const TaskContext = createContext();
+import { useState, useEffect } from 'react';
+import TaskContext from './TaskContextObject';
 
 const normalizeTask = (task) => ({
   ...task,
@@ -13,7 +12,7 @@ export function TaskProvider({ children }) {
     try {
       const saved = localStorage.getItem('tasks');
       return saved ? JSON.parse(saved).map(normalizeTask) : [];
-    } catch (e) {
+    } catch {
       return [];
     }
   });
