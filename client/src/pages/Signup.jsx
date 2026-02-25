@@ -1,30 +1,31 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { authApi } from "../lib/api";
-import "../styles/Signup.css";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authApi } from '../api/authApi';
+import { setAuth } from '../utils/authStorage';
+import '../styles/Signup.css';
 
 export default function Signup() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     if (!name.trim() || !email.trim() || !password) {
-      setError("Please fill all required fields.");
+      setError('Please fill all required fields.');
       return;
     }
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError('Password must be at least 6 characters.');
       return;
     }
     if (password !== confirm) {
-      setError("Passwords do not match.");
+      setError('Passwords do not match.');
       return;
     }
 
@@ -36,11 +37,10 @@ export default function Signup() {
         password,
       });
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/dashboard");
+      setAuth({ token: data.token, user: data.user });
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.message || "Signup failed.");
+      setError(err.message || 'Signup failed.');
     } finally {
       setIsSubmitting(false);
     }
@@ -83,7 +83,7 @@ export default function Signup() {
           {error && <div className="form-error">{error}</div>}
 
           <button type="submit" className="btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Sign up"}
+            {isSubmitting ? 'Creating...' : 'Sign up'}
           </button>
         </form>
       </div>

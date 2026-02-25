@@ -1,11 +1,19 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { createAuditLog } from '../utils/activityLogger.js';
 
 const signToken = (userId) =>
   jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
+
+const serializeUser = (user) => ({
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+});
 
 export const registerUser = async (req, res) => {
   try {
@@ -30,7 +38,7 @@ export const registerUser = async (req, res) => {
     const token = signToken(user._id);
     return res.status(201).json({
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: serializeUser(user),
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -56,9 +64,18 @@ export const loginUser = async (req, res) => {
     }
 
     const token = signToken(user._id);
+
+    await createAuditLog({
+      action: 'User login',
+      entityType: 'user',
+      entityId: user._id,
+      performedBy: user._id,
+      metadata: { email: user.email },
+    });
+
     return res.status(200).json({
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: serializeUser(user),
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

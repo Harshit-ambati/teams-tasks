@@ -1,88 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { taskApi } from '../api/taskApi';
 import TaskContext from './TaskContextObject';
 
-const normalizeTask = (task) => ({
-  ...task,
-  projectId: task.projectId || '',
-  assignedTo: task.assignedTo || '',
-});
-
 export function TaskProvider({ children }) {
-  const [tasks, setTasks] = useState(() => {
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchTasks = useCallback(async (projectId = null) => {
+    setLoading(true);
     try {
-      const saved = localStorage.getItem('tasks');
-      return saved ? JSON.parse(saved).map(normalizeTask) : [];
-    } catch {
-      return [];
+      const data = projectId ? await taskApi.getByProject(projectId) : await taskApi.getAll();
+      setTasks(Array.isArray(data) ? data : []);
+      return data;
+    } finally {
+      setLoading(false);
     }
-  });
+  }, []);
 
-  // persist to localStorage whenever tasks change
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+  const createTask = useCallback(async (payload) => {
+    const created = await taskApi.create(payload);
+    setTasks((prev) => [created, ...prev]);
+    return created;
+  }, []);
 
-  const addTask = (taskData) => {
-    const newTask = normalizeTask({
-      id: Date.now(),
-      ...taskData,
-      status: 'todo',
-      createdAt: new Date().toISOString(),
-      completedAt: null,
-    });
-    setTasks((prev) => [newTask, ...prev]);
-  };
+  const updateTask = useCallback(async (id, updates) => {
+    const updated = await taskApi.update(id, updates);
+    setTasks((prev) => prev.map((task) => (task._id === id ? updated : task)));
+    return updated;
+  }, []);
 
-  const updateTask = (id, updates) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id
-          ? normalizeTask({
-              ...normalizeTask(task),
-              ...updates,
-              completedAt:
-                updates.status === 'completed' && task.status !== 'completed'
-                  ? new Date().toISOString()
-                  : task.completedAt,
-            })
-          : task
-      )
-    );
-  };
+  const deleteTask = useCallback(async (id) => {
+    await taskApi.remove(id);
+    setTasks((prev) => prev.filter((task) => task._id !== id));
+  }, []);
 
-  const deleteTask = (id) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
-  };
-
-  const toggleTaskStatus = (id, currentStatus) => {
-    const statusCycle = {
-      todo: 'in-progress',
-      'in-progress': 'completed',
-      completed: 'todo',
-    };
-    updateTask(id, { status: statusCycle[currentStatus] });
-  };
-
-  const toggleTaskCompletion = (id) => {
-    const task = tasks.find((t) => t.id === id);
-    if (!task) return;
-
-    const newStatus = task.status === 'completed' ? 'todo' : 'completed';
-    updateTask(id, { status: newStatus });
-  };
-
-  return (
-    <TaskContext.Provider
-      value={{
-        tasks,
-        addTask,
-        updateTask,
-        deleteTask,
-        toggleTaskStatus,
-        toggleTaskCompletion,
-      }}
-    >
-      {children}
-    </TaskContext.Provider>
+  const value = useMemo(
+    () => ({
+      tasks,
+      loading,
+      fetchTasks,
+      createTask,
+      updateTask,
+      deleteTask,
+    }),
+    [tasks, loading, fetchTasks, createTask, updateTask, deleteTask]
   );
+
+  return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 }

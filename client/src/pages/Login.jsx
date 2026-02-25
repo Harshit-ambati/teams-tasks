@@ -1,6 +1,7 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
-import { authApi } from '../lib/api';
+import { authApi } from '../api/authApi';
+import { setAuth } from '../utils/authStorage';
 import logo from '../assets/logo.png';
 import '../styles/Login.css';
 
@@ -27,8 +28,7 @@ function Login() {
         password,
       });
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      setAuth({ token: data.token, user: data.user });
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed');

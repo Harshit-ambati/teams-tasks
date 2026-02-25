@@ -278,6 +278,66 @@
   font-size: 0.86rem;
 }
 
+.projects-page .project-team-section {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.projects-page .project-team-title {
+  margin: 0 0 6px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.projects-page .project-team-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.projects-page .member-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.projects-page .member-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.16);
+  color: var(--text);
+  font-size: 0.74rem;
+}
+
+.projects-page .member-chip.selectable {
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.projects-page .member-chip.selectable input {
+  margin: 0;
+}
+
+.projects-page .member-chip.selectable.selected {
+  border-color: rgba(148, 163, 184, 0.5);
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.projects-page .form-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin: 6px 0 0;
+}
+
 @media (max-width: 768px) {
   .projects-page {
     padding: 88px 16px 28px;

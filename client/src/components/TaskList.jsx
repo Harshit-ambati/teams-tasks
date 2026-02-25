@@ -18,12 +18,12 @@ export default function TaskList({
         <div className="tasks-grid">
           {tasks.map((task) => (
             <TaskItem
-              key={task.id}
+              key={task._id}
               task={task}
-              onToggleStatus={() => onToggleStatus(task.id, task.status)}
-              onToggleCompletion={() => onToggleCompletion(task.id)}
+              onToggleStatus={() => onToggleStatus(task._id, task.status)}
+              onToggleCompletion={() => onToggleCompletion(task._id)}
               onEdit={() => onEdit(task)}
-              onDelete={() => onDelete(task.id)}
+              onDelete={() => onDelete(task._id)}
             />
           ))}
         </div>

@@ -23,16 +23,17 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
   const [formData, setFormData] = useState(() => ({
     title: initialTask?.title || '',
     description: initialTask?.description || '',
+    status: initialTask?.status || 'todo',
     priority: initialTask?.priority || 'medium',
-    dueDate: initialTask?.dueDate || '',
-    projectId: initialTask?.projectId || '',
-    assignedTo: initialTask?.assignedTo || '',
+    dueDate: initialTask?.dueDate ? String(initialTask.dueDate).slice(0, 10) : '',
+    project: initialTask?.project?._id || initialTask?.project || '',
+    assignedTo: initialTask?.assignedTo?._id || initialTask?.assignedTo || '',
   }));
 
   const [errors, setErrors] = useState({});
-  const selectedProject = projects.find((project) => project.id === formData.projectId);
+  const selectedProject = projects.find((project) => project._id === formData.project);
   const teamMembers = selectedProject?.members || [];
-  const isAssignedMemberValid = teamMembers.some((member) => member.id === formData.assignedTo);
+  const isAssignedMemberValid = teamMembers.some((member) => member._id === formData.assignedTo);
 
   const validateForm = () => {
     const newErrors = {};
@@ -51,7 +52,7 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === 'projectId' ? { assignedTo: '' } : {}),
+      ...(name === 'project' ? { assignedTo: '' } : {}),
     }));
     if (errors[name]) {
       setErrors((prev) => ({
@@ -66,14 +67,16 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
     if (validateForm()) {
       onSubmit({
         ...formData,
-        assignedTo: isAssignedMemberValid ? formData.assignedTo : '',
+        assignedTo: isAssignedMemberValid ? formData.assignedTo : undefined,
+        dueDate: formData.dueDate || null,
       });
       setFormData({
         title: '',
         description: '',
+        status: 'todo',
         priority: 'medium',
         dueDate: '',
-        projectId: '',
+        project: '',
         assignedTo: '',
       });
     }
@@ -116,13 +119,16 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
 
         <div className="form-row">
           <div className="form-group">
+            <label htmlFor="status">Status</label>
+            <select id="status" name="status" value={formData.status} onChange={handleChange}>
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div className="form-group">
             <label htmlFor="priority">Priority</label>
-            <select
-              id="priority"
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
-            >
+            <select id="priority" name="priority" value={formData.priority} onChange={handleChange}>
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
@@ -131,28 +137,17 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
 
           <div className="form-group">
             <label htmlFor="dueDate">Due Date</label>
-            <input
-              type="date"
-              id="dueDate"
-              name="dueDate"
-              value={formData.dueDate}
-              onChange={handleChange}
-            />
+            <input type="date" id="dueDate" name="dueDate" value={formData.dueDate} onChange={handleChange} />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="projectId">Project</label>
-            <select
-              id="projectId"
-              name="projectId"
-              value={formData.projectId}
-              onChange={handleChange}
-            >
+            <label htmlFor="project">Project</label>
+            <select id="project" name="project" value={formData.project} onChange={handleChange}>
               <option value="">Select project</option>
               {projects.map((project) => (
-                <option key={project.id} value={project.id}>
+                <option key={project._id} value={project._id}>
                   {project.title}
                 </option>
               ))}
@@ -166,17 +161,17 @@ export default function TaskForm({ onSubmit, initialTask, onCancel, projects = [
               name="assignedTo"
               value={isAssignedMemberValid ? formData.assignedTo : ''}
               onChange={handleChange}
-              disabled={!formData.projectId || teamMembers.length === 0}
+              disabled={!formData.project || teamMembers.length === 0}
             >
               <option value="">
-                {!formData.projectId
+                {!formData.project
                   ? 'Select project first'
                   : teamMembers.length === 0
-                    ? 'No team members in project'
-                    : 'Select member'}
+                  ? 'No team members in project'
+                  : 'Select member'}
               </option>
               {teamMembers.map((member) => (
-                <option key={member.id} value={member.id}>
+                <option key={member._id} value={member._id}>
                   {member.name} ({member.role})
                 </option>
               ))}

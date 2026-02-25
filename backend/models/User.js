@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
+    role: {
+      type: String,
+      enum: ['admin', 'project_manager', 'department_leader', 'team_leader', 'team_member'],
+      default: 'team_member',
+    },
   },
   { timestamps: true }
 );

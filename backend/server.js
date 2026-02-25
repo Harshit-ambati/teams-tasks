@@ -7,6 +7,11 @@ import authRoutes from './routes/authRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import auditLogRoutes from './routes/auditLogRoutes.js';
+import resourceRequestRoutes from './routes/resourceRequestRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -31,6 +36,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/audit-logs', auditLogRoutes);
+app.use('/api/resource-requests', resourceRequestRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/users', userRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: `Route not found: ${req.method} ${req.originalUrl}` });

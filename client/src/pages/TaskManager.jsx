@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useEffect, useState, useContext, useMemo } from 'react';
 import TaskForm from '../components/TaskForm';
 import TaskList from '../components/TaskList';
 import TaskStats from '../components/TaskStats';
@@ -7,20 +7,41 @@ import TaskContext from '../context/TaskContextObject';
 import ProjectContext from '../context/ProjectContextObject';
 
 export default function TaskManager() {
-  const { tasks, addTask, updateTask, deleteTask, toggleTaskStatus, toggleTaskCompletion } =
+  const { tasks, fetchTasks, createTask, updateTask, deleteTask } =
     useContext(TaskContext);
-  const { projects } = useContext(ProjectContext);
+  const { projects, projectTeams, fetchProjectTeam } = useContext(ProjectContext);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingTask, setEditingTask] = useState(null);
 
+  useEffect(() => {
+    fetchTasks().catch(() => {});
+  }, [fetchTasks]);
+
+  useEffect(() => {
+    projects.forEach((project) => {
+      fetchProjectTeam(project._id).catch(() => {});
+    });
+  }, [projects, fetchProjectTeam]);
+
+  const projectsWithMembers = useMemo(
+    () =>
+      projects.map((project) => ({
+        ...project,
+        members: projectTeams[project._id]?.members || [],
+      })),
+    [projects, projectTeams]
+  );
+
   const tasksWithAssignee = tasks.map((task) => {
-    const project = projects.find((item) => item.id === task.projectId);
-    const assignedMember = project?.members?.find((member) => member.id === task.assignedTo);
+    const assignedMemberName =
+      typeof task.assignedTo === 'object' && task.assignedTo?.name
+        ? task.assignedTo.name
+        : '';
 
     return {
       ...task,
-      assignedMemberName: assignedMember?.name || '',
+      assignedMemberName,
     };
   });
 
@@ -38,6 +59,31 @@ export default function TaskManager() {
     completed: tasks.filter((t) => t.status === 'completed'),
   };
 
+  const handleSubmit = async (data) => {
+    if (editingTask) {
+      await updateTask(editingTask._id, data);
+      setEditingTask(null);
+      return;
+    }
+    await createTask(data);
+  };
+
+  const toggleTaskStatus = async (taskId, currentStatus) => {
+    const statusCycle = {
+      todo: 'in-progress',
+      'in-progress': 'completed',
+      completed: 'todo',
+    };
+    await updateTask(taskId, { status: statusCycle[currentStatus] });
+  };
+
+  const toggleTaskCompletion = async (taskId) => {
+    const current = tasks.find((task) => task._id === taskId);
+    if (!current) return;
+    const nextStatus = current.status === 'completed' ? 'todo' : 'completed';
+    await updateTask(taskId, { status: nextStatus });
+  };
+
   return (
     <div className="task-manager-container">
       <header className="task-manager-header">
@@ -48,9 +94,9 @@ export default function TaskManager() {
       <div className="task-manager-content">
         <aside className="task-manager-sidebar">
           <TaskForm
-            key={editingTask ? editingTask.id : 'new'}
-            projects={projects}
-            onSubmit={editingTask ? (data) => updateTask(editingTask.id, data) : addTask}
+            key={editingTask ? editingTask._id : 'new'}
+            projects={projectsWithMembers}
+            onSubmit={handleSubmit}
             initialTask={editingTask}
             onCancel={() => setEditingTask(null)}
           />
