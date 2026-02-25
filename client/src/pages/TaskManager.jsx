@@ -1,18 +1,29 @@
-import { useEffect, useState, useContext, useMemo } from 'react';
+import { useEffect, useMemo, useState, useContext, useCallback } from 'react';
 import TaskForm from '../components/TaskForm';
 import TaskList from '../components/TaskList';
 import TaskStats from '../components/TaskStats';
 import '../styles/TaskManager.css';
 import TaskContext from '../context/TaskContextObject';
 import ProjectContext from '../context/ProjectContextObject';
+import { subtaskApi } from '../api/subtaskApi';
+import { collaborationRequestApi } from '../api/collaborationRequestApi';
+import { getCurrentUser } from '../utils/authStorage';
 
 export default function TaskManager() {
-  const { tasks, fetchTasks, createTask, updateTask, deleteTask } =
-    useContext(TaskContext);
+  const { tasks, fetchTasks, createTask, updateTask, deleteTask } = useContext(TaskContext);
   const { projects, projectTeams, fetchProjectTeam } = useContext(ProjectContext);
+
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingTask, setEditingTask] = useState(null);
+  const [subtasksByTask, setSubtasksByTask] = useState({});
+  const [collaborationByTask, setCollaborationByTask] = useState({});
+
+  const currentUser = getCurrentUser();
+  const currentUserId = currentUser?._id;
+  const canReviewRequests = ['admin', 'project_manager', 'department_leader', 'team_leader'].includes(
+    currentUser?.role || ''
+  );
 
   useEffect(() => {
     fetchTasks().catch(() => {});
@@ -24,6 +35,25 @@ export default function TaskManager() {
     });
   }, [projects, fetchProjectTeam]);
 
+  const refreshTaskWorkflow = useCallback(
+    async (taskId) => {
+      const [subtasks, requests] = await Promise.all([
+        subtaskApi.getByTask(taskId).catch(() => []),
+        collaborationRequestApi.getByTask(taskId).catch(() => []),
+      ]);
+
+      setSubtasksByTask((prev) => ({ ...prev, [taskId]: Array.isArray(subtasks) ? subtasks : [] }));
+      setCollaborationByTask((prev) => ({ ...prev, [taskId]: Array.isArray(requests) ? requests : [] }));
+    },
+    []
+  );
+
+  useEffect(() => {
+    tasks.forEach((task) => {
+      refreshTaskWorkflow(task._id).catch(() => {});
+    });
+  }, [tasks, refreshTaskWorkflow]);
+
   const projectsWithMembers = useMemo(
     () =>
       projects.map((project) => ({
@@ -33,11 +63,18 @@ export default function TaskManager() {
     [projects, projectTeams]
   );
 
+  const projectMembersByTask = useMemo(() => {
+    const map = {};
+    tasks.forEach((task) => {
+      const projectId = String(task.project?._id || task.project || '');
+      map[task._id] = projectTeams[projectId]?.members || [];
+    });
+    return map;
+  }, [tasks, projectTeams]);
+
   const tasksWithAssignee = tasks.map((task) => {
     const assignedMemberName =
-      typeof task.assignedTo === 'object' && task.assignedTo?.name
-        ? task.assignedTo.name
-        : '';
+      typeof task.assignedTo === 'object' && task.assignedTo?.name ? task.assignedTo.name : '';
 
     return {
       ...task,
@@ -46,10 +83,12 @@ export default function TaskManager() {
   });
 
   const filteredTasks = tasksWithAssignee.filter((task) => {
+    const title = String(task.title || '');
+    const description = String(task.description || '');
     const matchesFilter = filter === 'all' || task.status === filter;
     const matchesSearch =
-      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.description.toLowerCase().includes(searchTerm.toLowerCase());
+      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -82,6 +121,41 @@ export default function TaskManager() {
     if (!current) return;
     const nextStatus = current.status === 'completed' ? 'todo' : 'completed';
     await updateTask(taskId, { status: nextStatus });
+  };
+
+  const handleCreateSubtask = async (taskId, payload) => {
+    await subtaskApi.create({ parentTaskId: taskId, ...payload });
+    await fetchTasks();
+    await refreshTaskWorkflow(taskId);
+  };
+
+  const handleToggleSubtaskStatus = async (subtaskId, status) => {
+    const updated = await subtaskApi.update(subtaskId, { status });
+    const taskId = String(updated.parentTaskId?._id || updated.parentTaskId);
+    await fetchTasks();
+    await refreshTaskWorkflow(taskId);
+  };
+
+  const handleDeleteSubtask = async (subtaskId, taskId) => {
+    await subtaskApi.remove(subtaskId);
+    await fetchTasks();
+    await refreshTaskWorkflow(taskId);
+  };
+
+  const handleCreateCollaborationRequest = async (taskId, payload) => {
+    await collaborationRequestApi.create({ taskId, ...payload });
+    await refreshTaskWorkflow(taskId);
+  };
+
+  const handleApproveRequest = async (requestId, taskId) => {
+    await collaborationRequestApi.approve(requestId);
+    await fetchTasks();
+    await refreshTaskWorkflow(taskId);
+  };
+
+  const handleRejectRequest = async (requestId, taskId) => {
+    await collaborationRequestApi.reject(requestId);
+    await refreshTaskWorkflow(taskId);
   };
 
   return (
@@ -131,6 +205,17 @@ export default function TaskManager() {
             onToggleCompletion={toggleTaskCompletion}
             onEdit={setEditingTask}
             onDelete={deleteTask}
+            subtasksByTask={subtasksByTask}
+            onCreateSubtask={handleCreateSubtask}
+            onToggleSubtaskStatus={handleToggleSubtaskStatus}
+            onDeleteSubtask={handleDeleteSubtask}
+            collaborationByTask={collaborationByTask}
+            onCreateCollaborationRequest={handleCreateCollaborationRequest}
+            onApproveRequest={handleApproveRequest}
+            onRejectRequest={handleRejectRequest}
+            canReviewRequests={canReviewRequests}
+            projectMembersByTask={projectMembersByTask}
+            currentUserId={currentUserId}
           />
 
           {filteredTasks.length === 0 && (

@@ -10,12 +10,26 @@ function NewProjectModal({ onClose, onCreate }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('planning');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!title.trim()) return;
-    await onCreate({ title, description, status });
-    onClose();
+    setError('');
+    if (!title.trim()) {
+      setError('Project title is required');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await onCreate({ title: title.trim(), description: description.trim(), status });
+      onClose();
+    } catch (createError) {
+      setError(createError.message || 'Project creation failed');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -46,9 +60,14 @@ function NewProjectModal({ onClose, onCreate }) {
               <option value="completed">Completed</option>
             </select>
           </div>
+          {error && <p className="form-error">{error}</p>}
           <div className="projects-modal-actions">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Create Project</button>
+            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={isSubmitting}>
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating...' : 'Create Project'}
+            </button>
           </div>
         </form>
       </div>

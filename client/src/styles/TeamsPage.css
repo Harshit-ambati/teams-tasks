@@ -4,11 +4,8 @@
   margin: 0;
   padding: 100px 24px 40px;
   min-height: calc(100vh - 60px);
-  background:
-    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
-  background-color: #0f172a;
+  background: var(--page-bg);
+  background-color: var(--page-bg-color);
   border-radius: 0;
 }
 
@@ -84,9 +81,12 @@
 
 .teams-page .teams-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
   align-items: stretch;
+  grid-auto-flow: row;
+  grid-auto-rows: 1fr;
+  margin-top: 18px;
 }
 
 .teams-page .team-card {
@@ -99,11 +99,15 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+  min-height: 230px;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
 }
 
 .teams-page .team-card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 8px;
@@ -112,6 +116,8 @@
 .teams-page .team-card-header h3 {
   margin: 0;
   font-size: 1.05rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .teams-page .team-description {
@@ -126,6 +132,7 @@
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 12px;
+  align-content: flex-start;
 }
 
 .teams-page .team-members-empty {
@@ -135,12 +142,18 @@
 }
 
 .teams-page .member-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
   font-size: 0.74rem;
   color: #dbeafe;
   background: rgba(59, 130, 246, 0.16);
   border: 1px solid rgba(96, 165, 250, 0.3);
   border-radius: 999px;
   padding: 5px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .teams-page .member-chip.more {
@@ -154,6 +167,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 .teams-page .team-card-footer.secondary {
@@ -173,6 +189,7 @@
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .teams-page .team-card:hover {

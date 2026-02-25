@@ -15,7 +15,7 @@ const notificationSchema = new mongoose.Schema(
     relatedEntity: {
       entityType: {
         type: String,
-        enum: ['project', 'task', 'team'],
+        enum: ['project', 'task', 'team', 'subtask', 'collaboration_request'],
         default: null,
       },
       entityId: {

@@ -10,6 +10,11 @@
 
 :root {
   --bg: #0f172a;
+  --page-bg:
+    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+  --page-bg-color: #0f172a;
   --surface: #1e293b;
   --muted: #94a3b8;
   --text: #f8fafc;
@@ -42,7 +47,8 @@ body {
   margin: 0;
   padding-top: 60px; /* offset fixed navbar height */
   font-family: var(--font-gaming);
-  background: linear-gradient(180deg, var(--bg), #1e293b);
+  background: var(--page-bg);
+  background-color: var(--page-bg-color);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
 }

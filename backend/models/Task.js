@@ -40,6 +40,24 @@ const taskSchema = new mongoose.Schema(
       ref: 'User',
       default: null,
     },
+    collaborators: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    subtasks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Subtask',
+      },
+    ],
+    progressPercentage: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

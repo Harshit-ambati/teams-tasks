@@ -12,6 +12,8 @@ import auditLogRoutes from './routes/auditLogRoutes.js';
 import resourceRequestRoutes from './routes/resourceRequestRoutes.js';
 import departmentRoutes from './routes/departmentRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import subtaskRoutes from './routes/subtaskRoutes.js';
+import collaborationRequestRoutes from './routes/collaborationRequestRoutes.js';
 
 dotenv.config();
 
@@ -36,6 +38,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/subtasks', subtaskRoutes);
+app.use('/api/collaboration-requests', collaborationRequestRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/audit-logs', auditLogRoutes);
 app.use('/api/resource-requests', resourceRequestRoutes);

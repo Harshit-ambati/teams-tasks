@@ -38,6 +38,14 @@ function ProtectedRoute({ children, roles }) {
   return children;
 }
 
+function PublicOnlyRoute({ children }) {
+  if (isAuthenticated()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
 function App() {
   const [showSplash, setShowSplash] = React.useState(true);
 
@@ -58,7 +66,14 @@ function App() {
             <ConditionalNavbar splashActive={showSplash} />
             {showSplash && <Splash onComplete={() => setShowSplash(false)} />}
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route
+                path="/"
+                element={
+                  <PublicOnlyRoute>
+                    <Home />
+                  </PublicOnlyRoute>
+                }
+              />
               <Route
                 path="/dashboard"
                 element={
@@ -99,8 +114,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+              <Route
+                path="/login"
+                element={
+                  <PublicOnlyRoute>
+                    <Login />
+                  </PublicOnlyRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PublicOnlyRoute>
+                    <Signup />
+                  </PublicOnlyRoute>
+                }
+              />
             </Routes>
           </div>
         </BrowserRouter>

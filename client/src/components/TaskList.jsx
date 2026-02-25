@@ -7,6 +7,17 @@ export default function TaskList({
   onToggleCompletion,
   onEdit,
   onDelete,
+  subtasksByTask,
+  onCreateSubtask,
+  onToggleSubtaskStatus,
+  onDeleteSubtask,
+  collaborationByTask,
+  onCreateCollaborationRequest,
+  onApproveRequest,
+  onRejectRequest,
+  canReviewRequests,
+  projectMembersByTask,
+  currentUserId,
 }) {
   return (
     <div className="task-list">
@@ -24,6 +35,17 @@ export default function TaskList({
               onToggleCompletion={() => onToggleCompletion(task._id)}
               onEdit={() => onEdit(task)}
               onDelete={() => onDelete(task._id)}
+              subtasks={subtasksByTask[task._id] || []}
+              onCreateSubtask={onCreateSubtask}
+              onToggleSubtaskStatus={onToggleSubtaskStatus}
+              onDeleteSubtask={onDeleteSubtask}
+              collaborationRequests={collaborationByTask[task._id] || []}
+              onCreateCollaborationRequest={onCreateCollaborationRequest}
+              onApproveRequest={onApproveRequest}
+              onRejectRequest={onRejectRequest}
+              canReviewRequests={canReviewRequests}
+              projectMembers={projectMembersByTask[task._id] || []}
+              currentUserId={currentUserId}
             />
           ))}
         </div>
