@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../lib/api";
 import "../styles/Signup.css";
 
 export default function Signup() {
@@ -9,8 +10,9 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
     if (!name.trim() || !email.trim() || !password) {
@@ -26,18 +28,28 @@ export default function Signup() {
       return;
     }
 
-    const usersRaw = localStorage.getItem("users") || "[]";
-    const users = JSON.parse(usersRaw);
-    users.push({ id: Date.now(), name, email });
-    localStorage.setItem("users", JSON.stringify(users));
+    try {
+      setIsSubmitting(true);
+      const data = await authApi.register({
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      });
 
-    navigate("/dashboard");
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message || "Signup failed.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="signup-page">
       <div className="signup-card">
-        <h2 style={{color: "black"}}>Create your account</h2>
+        <h2>Create your account</h2>
         <p className="muted">Start managing tasks and projects.</p>
         <form onSubmit={handleSignup} className="signup-form">
           <input
@@ -70,7 +82,9 @@ export default function Signup() {
 
           {error && <div className="form-error">{error}</div>}
 
-          <button type="submit" className="btn-primary">Sign up</button>
+          <button type="submit" className="btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Sign up"}
+          </button>
         </form>
       </div>
     </div>

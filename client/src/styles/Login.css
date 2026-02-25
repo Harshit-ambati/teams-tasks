@@ -17,12 +17,22 @@
 .login-card {
   width: 100%;
   max-width: 440px;
-  background: linear-gradient(140deg, #ffffff 0%, #f7f9ff 100%);
+  background: rgba(30, 41, 59, 0.66);
   padding: 30px;
   border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42);
   text-align: center;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(129, 140, 248, 0.28);
+  box-shadow: 0 16px 38px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 40px rgba(129, 140, 248, 0.22);
 }
 
 .login-logo {
@@ -33,14 +43,14 @@
 
 .login-card h2 {
   margin: 0;
-  color: #0f172a;
+  color: #e2e8f0;
   font-size: 1.65rem;
   font-weight: 700;
 }
 
 .login-subtitle {
   margin: 8px 0 20px;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 0.95rem;
 }
 
@@ -55,10 +65,11 @@
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid #dbe2ea;
+  border: 1px solid rgba(148, 163, 184, 0.28);
   font-size: 0.95rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-  background: #fff;
+  background: rgba(15, 23, 42, 0.62);
+  color: #e2e8f0;
 }
 
 .login-card input[type='email']::placeholder,
@@ -68,9 +79,9 @@
 
 .login-card input:focus {
   outline: none;
-  border-color: #667eea;
-  background: #f9fbff;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.14);
+  border-color: #818cf8;
+  background: rgba(15, 23, 42, 0.76);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
 }
 
 .login-card button[type='submit'] {
@@ -94,7 +105,7 @@
 
 .already-account {
   font-size: 0.9rem;
-  color: #64748b;
+  color: #94a3b8;
   margin: 0;
 }
 
@@ -106,6 +117,19 @@
 
 .already-account a:hover {
   color: #764ba2;
+}
+
+.form-error {
+  color: #fda4af;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.login-card button[type='submit']:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 480px) {

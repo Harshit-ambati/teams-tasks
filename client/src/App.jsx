@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -17,6 +17,16 @@ function ConditionalNavbar({ splashActive }) {
   return <Navbar className={splashActive ? "splash-hidden" : ""} />;
 }
 
+function isAuthenticated() {
+  const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  return Boolean(token && user);
+}
+
+function ProtectedRoute({ children }) {
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+}
+
 function App() {
   const [showSplash, setShowSplash] = React.useState(true);
 
@@ -29,10 +39,38 @@ function App() {
             {showSplash && <Splash onComplete={() => setShowSplash(false)} />}
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/teams" element={<TeamsPage />} />
-                <Route path="/tasks" element={<TaskManager />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/projects"
+                  element={
+                    <ProtectedRoute>
+                      <ProjectsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/teams"
+                  element={
+                    <ProtectedRoute>
+                      <TeamsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/tasks"
+                  element={
+                    <ProtectedRoute>
+                      <TaskManager />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
               </Routes>

@@ -1,5 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { authApi } from '../lib/api';
 import logo from '../assets/logo.png';
 import '../styles/Login.css';
 
@@ -7,11 +8,32 @@ function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email && password) {
+    setError('');
+
+    if (!email.trim() || !password) {
+      setError('Email and password are required.');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const data = await authApi.login({
+        email: email.trim(),
+        password,
+      });
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -26,17 +48,22 @@ function Login() {
           <input
             type="email"
             placeholder="Email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {error && <div className="form-error">{error}</div>}
           <p className="already-account">
             Don&apos;t have an account? <Link to="/signup">Sign up</Link>
           </p>
-          <button type="submit">Login</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Logging in...' : 'Login'}
+          </button>
         </form>
       </div>
     </div>
