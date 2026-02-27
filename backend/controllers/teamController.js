@@ -1,4 +1,6 @@
 import Team from '../models/Team.js';
+import ChatRoom from '../models/ChatRoom.js';
+import { ensureTeamChatRoom } from '../services/chatRoomService.js';
 import { createAuditLog, createNotification } from '../utils/activityLogger.js';
 
 export const getTeams = async (req, res) => {
@@ -21,6 +23,7 @@ export const createTeam = async (req, res) => {
       members: Array.isArray(members) ? members : [],
       owner: req.user.id,
     });
+    await ensureTeamChatRoom({ team, performedBy: req.user.id });
 
     await createAuditLog({
       action: 'Team created',
@@ -73,6 +76,7 @@ export const updateTeam = async (req, res) => {
       new: true,
       runValidators: true,
     });
+    await ensureTeamChatRoom({ team, performedBy: req.user.id });
 
     await createAuditLog({
       action: 'Team updated',
@@ -111,6 +115,7 @@ export const deleteTeam = async (req, res) => {
         : { _id: req.params.id, owner: req.user.id };
     const team = await Team.findOneAndDelete(query);
     if (!team) return res.status(404).json({ message: 'Team not found' });
+    await ChatRoom.deleteOne({ type: 'team', teamId: team._id });
 
     await createAuditLog({
       action: 'Team deleted',

@@ -5,6 +5,7 @@ const baseURL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').re
 
 const axiosClient = axios.create({
   baseURL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },

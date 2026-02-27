@@ -8,8 +8,10 @@ import Signup from './pages/Signup';
 import ProjectsPage from './pages/ProjectsPage';
 import TeamsPage from './pages/TeamsPage';
 import AuditLogs from './pages/AuditLogs';
+import ChatPage from './pages/ChatPage';
 import { TaskProvider } from './context/TaskContext';
 import { ProjectProvider } from './context/ProjectContext';
+import { ChatProvider } from './context/ChatContext';
 import Splash from './components/Splash';
 import Navbar from './components/Navbar';
 import { getCurrentUser, getToken } from './utils/authStorage';
@@ -61,78 +63,88 @@ function App() {
   return (
     <TaskProvider>
       <ProjectProvider>
-        <BrowserRouter>
-          <div className="app">
-            <ConditionalNavbar splashActive={showSplash} />
-            {showSplash && <Splash onComplete={() => setShowSplash(false)} />}
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <PublicOnlyRoute>
-                    <Home />
-                  </PublicOnlyRoute>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/projects"
-                element={
-                  <ProtectedRoute>
-                    <ProjectsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/teams"
-                element={
-                  <ProtectedRoute roles={['admin', 'project_manager', 'department_leader']}>
-                    <TeamsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/tasks"
-                element={
-                  <ProtectedRoute>
-                    <TaskManager />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/audit-logs"
-                element={
-                  <ProtectedRoute roles={['admin']}>
-                    <AuditLogs />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/login"
-                element={
-                  <PublicOnlyRoute>
-                    <Login />
-                  </PublicOnlyRoute>
-                }
-              />
-              <Route
-                path="/signup"
-                element={
-                  <PublicOnlyRoute>
-                    <Signup />
-                  </PublicOnlyRoute>
-                }
-              />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <ChatProvider>
+          <BrowserRouter>
+            <div className="app">
+              <ConditionalNavbar splashActive={showSplash} />
+              {showSplash && <Splash onComplete={() => setShowSplash(false)} />}
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <PublicOnlyRoute>
+                      <Home />
+                    </PublicOnlyRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/projects"
+                  element={
+                    <ProtectedRoute>
+                      <ProjectsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/teams"
+                  element={
+                    <ProtectedRoute roles={['admin', 'project_manager', 'department_leader']}>
+                      <TeamsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/tasks"
+                  element={
+                    <ProtectedRoute>
+                      <TaskManager />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat"
+                  element={
+                    <ProtectedRoute>
+                      <ChatPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/audit-logs"
+                  element={
+                    <ProtectedRoute roles={['admin']}>
+                      <AuditLogs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/login"
+                  element={
+                    <PublicOnlyRoute>
+                      <Login />
+                    </PublicOnlyRoute>
+                  }
+                />
+                <Route
+                  path="/signup"
+                  element={
+                    <PublicOnlyRoute>
+                      <Signup />
+                    </PublicOnlyRoute>
+                  }
+                />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </ChatProvider>
       </ProjectProvider>
     </TaskProvider>
   );

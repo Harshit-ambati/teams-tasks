@@ -157,34 +157,23 @@ function Dashboard() {
       .slice(0, 12);
   }, [tasks, allowedPerformanceUserIds]);
 
-  useEffect(() => {
-    if (userPerformance.length === 0) {
-      setSelectedPerformanceUserId('');
-      return;
-    }
-
-    const exists = userPerformance.some((entry) => entry.id === selectedPerformanceUserId);
-    if (!exists) {
-      setSelectedPerformanceUserId(userPerformance[0].id);
-    }
-  }, [userPerformance, selectedPerformanceUserId]);
-
-  const selectedPerformanceUser = useMemo(
-    () => userPerformance.find((entry) => entry.id === selectedPerformanceUserId) || null,
-    [userPerformance, selectedPerformanceUserId]
-  );
-
   const filteredUserPerformance = useMemo(() => {
     const query = performanceSearch.trim().toLowerCase();
     if (!query) return userPerformance;
     return userPerformance.filter((entry) => entry.name.toLowerCase().includes(query));
   }, [userPerformance, performanceSearch]);
 
-  useEffect(() => {
-    if (filteredUserPerformance.length === 0) return;
+  const effectiveSelectedPerformanceUserId = useMemo(() => {
+    if (filteredUserPerformance.length === 0) return '';
     const exists = filteredUserPerformance.some((entry) => entry.id === selectedPerformanceUserId);
-    if (!exists) setSelectedPerformanceUserId(filteredUserPerformance[0].id);
+    return exists ? selectedPerformanceUserId : filteredUserPerformance[0].id;
   }, [filteredUserPerformance, selectedPerformanceUserId]);
+
+  const selectedPerformanceUser = useMemo(
+    () =>
+      filteredUserPerformance.find((entry) => entry.id === effectiveSelectedPerformanceUserId) || null,
+    [filteredUserPerformance, effectiveSelectedPerformanceUserId]
+  );
 
   return (
     <div className="dashboard-container">
@@ -420,7 +409,7 @@ function Dashboard() {
                             key={userStat.id}
                             type="button"
                             className={`performance-user-btn ${
-                              selectedPerformanceUserId === userStat.id ? 'is-active' : ''
+                              effectiveSelectedPerformanceUserId === userStat.id ? 'is-active' : ''
                             }`}
                             onClick={() => setSelectedPerformanceUserId(userStat.id)}
                           >

@@ -25,6 +25,16 @@ const userSchema = new mongoose.Schema(
       enum: ['admin', 'project_manager', 'department_leader', 'team_leader', 'team_member'],
       default: 'team_member',
     },
+    rsaPublicKey: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    rsaKeyVersion: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
   },
   { timestamps: true }
 );

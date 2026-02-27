@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { projectApi } from '../api/projectApi';
 import ProjectContext from './ProjectContextObject';
+import { AUTH_EVENTS, getToken } from '../utils/authStorage';
 
 export function ProjectProvider({ children }) {
   const [projects, setProjects] = useState([]);
@@ -48,9 +49,21 @@ export function ProjectProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    fetchProjects().catch(() => {
-      setProjects([]);
-    });
+    const syncProjects = () => {
+      if (!getToken()) {
+        setProjects([]);
+        setProjectTeams({});
+        return;
+      }
+
+      fetchProjects().catch(() => {
+        setProjects([]);
+      });
+    };
+
+    syncProjects();
+    window.addEventListener(AUTH_EVENTS.changed, syncProjects);
+    return () => window.removeEventListener(AUTH_EVENTS.changed, syncProjects);
   }, [fetchProjects]);
 
   const value = useMemo(

@@ -1,26 +1,51 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import '../styles/Navbar.css';
 import { notificationApi } from '../api/notificationApi';
-import { clearAuth, getCurrentUser } from '../utils/authStorage';
+import { AUTH_EVENTS, clearAuth, getCurrentUser } from '../utils/authStorage';
 
 export default function Navbar({ className = '' }) {
   const navigate = useNavigate();
+  const [user, setUser] = useState(() => getCurrentUser());
   const [notifications, setNotifications] = useState([]);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const user = getCurrentUser();
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const data = await notificationApi.getAll();
+      setNotifications(Array.isArray(data) ? data : []);
+    } catch {
+      setNotifications([]);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!user) return;
+    const syncAuthUser = () => {
+      const nextUser = getCurrentUser();
+      setUser(nextUser);
+      if (!nextUser) {
+        setNotifications([]);
+      }
+    };
 
-    notificationApi
-      .getAll()
-      .then((data) => setNotifications(Array.isArray(data) ? data : []))
-      .catch(() => setNotifications([]));
-  }, [user]);
+    window.addEventListener(AUTH_EVENTS.changed, syncAuthUser);
+    return () => window.removeEventListener(AUTH_EVENTS.changed, syncAuthUser);
+  }, []);
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const initialFetchId = window.setTimeout(() => {
+      fetchNotifications();
+    }, 0);
+    const intervalId = window.setInterval(fetchNotifications, 30000);
+    return () => {
+      window.clearTimeout(initialFetchId);
+      window.clearInterval(intervalId);
+    };
+  }, [user?._id, fetchNotifications]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -67,20 +92,26 @@ export default function Navbar({ className = '' }) {
     navigate('/login');
   };
 
-  const handleMarkAllRead = async () => {
-    await Promise.all(
-      notifications
-        .filter((item) => !item.isRead)
-        .map((item) => notificationApi.markRead(item._id))
-    );
-    const refreshed = await notificationApi.getAll();
-    setNotifications(Array.isArray(refreshed) ? refreshed : []);
-  };
+  const handleMarkAllRead = useCallback(async () => {
+    const unreadIds = notifications.filter((item) => !item.isRead).map((item) => item._id);
+    if (unreadIds.length === 0) return;
 
-  const handleMarkRead = async (id) => {
-    await notificationApi.markRead(id);
-    setNotifications((prev) => prev.map((item) => (item._id === id ? { ...item, isRead: true } : item)));
-  };
+    try {
+      await Promise.all(unreadIds.map((id) => notificationApi.markRead(id)));
+      await fetchNotifications();
+    } catch {
+      // Keep existing list if refresh fails.
+    }
+  }, [notifications, fetchNotifications]);
+
+  const handleMarkRead = useCallback(async (id) => {
+    try {
+      await notificationApi.markRead(id);
+      setNotifications((prev) => prev.map((item) => (item._id === id ? { ...item, isRead: true } : item)));
+    } catch {
+      // Ignore transient failures and preserve current state.
+    }
+  }, []);
 
   return (
     <header className={`app-navbar ${className}`.trim()}>
@@ -103,6 +134,7 @@ export default function Navbar({ className = '' }) {
               <Link to="/projects" className="nav-link">Projects</Link>
               <Link to="/teams" className="nav-link">Teams</Link>
               <Link to="/tasks" className="nav-link">Tasks</Link>
+              <Link to="/chat" className="nav-link">Chat</Link>
               {userRole === 'admin' && (
                 <Link to="/audit-logs" className="nav-link">Audit Logs</Link>
               )}

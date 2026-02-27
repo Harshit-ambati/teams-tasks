@@ -2,6 +2,7 @@ import Department from '../models/Department.js';
 import Project from '../models/Project.js';
 import ProjectTeam from '../models/ProjectTeam.js';
 import ResourceRequest from '../models/ResourceRequest.js';
+import { syncProjectChatMembers } from '../services/chatRoomService.js';
 import { createAuditLog, createNotification } from '../utils/activityLogger.js';
 
 const normalizeUserIds = (ids) => {
@@ -166,6 +167,7 @@ export const approveResourceRequest = async (req, res) => {
       projectTeam.teamLeader = validApproved[0];
     }
     await projectTeam.save();
+    await syncProjectChatMembers({ projectId: request.projectId, performedBy: req.user.id });
 
     await createAuditLog({
       action: 'Resource request approved',

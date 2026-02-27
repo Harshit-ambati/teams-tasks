@@ -1,5 +1,7 @@
 import Project from '../models/Project.js';
 import ProjectTeam from '../models/ProjectTeam.js';
+import ChatRoom from '../models/ChatRoom.js';
+import { ensureProjectChatRoom } from '../services/chatRoomService.js';
 import { createAuditLog, createNotification } from '../utils/activityLogger.js';
 
 export const getProjects = async (req, res) => {
@@ -58,6 +60,7 @@ export const createProject = async (req, res) => {
       team,
       owner: req.user.id,
     });
+    await ensureProjectChatRoom({ project, performedBy: req.user.id });
 
     await createAuditLog({
       action: 'Project created',
@@ -113,6 +116,7 @@ export const updateProject = async (req, res) => {
       runValidators: true,
     });
     if (!project) return res.status(404).json({ message: 'Project not found' });
+    await ensureProjectChatRoom({ project, performedBy: req.user.id });
 
     await createAuditLog({
       action: 'Project updated',
@@ -136,6 +140,7 @@ export const deleteProject = async (req, res) => {
         : { _id: req.params.id, owner: req.user.id };
     const project = await Project.findOneAndDelete(query);
     if (!project) return res.status(404).json({ message: 'Project not found' });
+    await ChatRoom.deleteOne({ type: 'project', projectId: project._id });
 
     await createAuditLog({
       action: 'Project deleted',
