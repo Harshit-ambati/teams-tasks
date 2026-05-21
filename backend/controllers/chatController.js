@@ -104,6 +104,14 @@ const getReactionMap = async (messageIds = []) => {
 const getAiAssistantUser = async () => {
   const aiEmail = process.env.AI_ASSISTANT_EMAIL || 'ai-assistant@local';
   let aiUser = await User.findOne({ email: aiEmail }).select('_id name email role');
+  const invalidAiUser =
+    aiUser &&
+    (String(aiUser.name || '').trim().toLowerCase() !== 'ai assistant' || String(aiUser.role || '') !== 'ai_assistant');
+  if (invalidAiUser) {
+    throw new Error(
+      `AI assistant email conflict: ${aiEmail} belongs to "${aiUser.name}". Set AI_ASSISTANT_EMAIL to a dedicated AI account email.`
+    );
+  }
   if (!aiUser) {
     const randomSecret = `ai-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const hashed = await bcrypt.hash(randomSecret, 10);
@@ -111,7 +119,7 @@ const getAiAssistantUser = async () => {
       name: 'AI Assistant',
       email: aiEmail,
       password: hashed,
-      role: 'team_member',
+      role: 'ai_assistant',
     });
   }
   return aiUser;
@@ -157,12 +165,16 @@ export const createPrivateRoom = async (req, res) => {
 export const createAiRoom = async (req, res) => {
   try {
     const aiUser = await getAiAssistantUser();
+    if (toStringId(aiUser._id) === toStringId(req.user.id)) {
+      return res.status(400).json({ message: 'AI assistant account cannot open an AI room' });
+    }
     const room = await getOrCreatePrivateRoom({
       userAId: req.user.id,
       userBId: aiUser._id,
       performedBy: req.user.id,
       roomType: 'ai',
     });
+    room.members = [req.user.id, aiUser._id];
     room.name = 'AI Assistant';
     await room.save();
 
@@ -570,13 +582,25 @@ export const getAiCompletion = async (req, res) => {
     const { roomId, prompt } = req.body || {};
     const room = await getAuthorizedRoom({ roomId, userId: req.user.id });
     if (!room) return res.status(403).json({ message: 'Forbidden: room access denied' });
+    if (room.type !== 'ai') return res.status(400).json({ message: 'AI completion is only available in AI rooms' });
 
-    const content = await generateAiResponse({ roomId, userName: req.user.name, prompt });
+    const aiUser = await getAiAssistantUser();
+    const memberIds = [...new Set((room.members || []).map((id) => toStringId(id)))];
+    const hasUser = memberIds.includes(toStringId(req.user.id));
+    const hasAi = memberIds.includes(toStringId(aiUser._id));
+    if (memberIds.length !== 2 || !hasUser || !hasAi) {
+      return res.status(400).json({ message: 'Invalid AI room membership' });
+    }
+
+    const rawPrompt = String(prompt || '').trim();
+    if (!rawPrompt) return res.status(400).json({ message: 'prompt is required' });
+
+    const content = await generateAiResponse({ roomId, userName: req.user.name, prompt: rawPrompt });
     await createAuditLog({
       action: 'AI chat interaction',
       entityType: 'ai_interaction',
       performedBy: req.user.id,
-      metadata: { roomId, promptLength: String(prompt || '').length },
+      metadata: { roomId, promptLength: rawPrompt.length },
     });
 
     return res.status(200).json({ content });

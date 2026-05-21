@@ -1,0 +1,48 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      CLIENT_URL: http://localhost:5173
+      MONGO_URI: mongodb://mongo:27017/mern_project
+      JWT_SECRET: change_this_jwt_secret
+      MESSAGE_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      CHAT_EDIT_WINDOW_MINUTES: 15
+      CHAT_MAX_FILE_MB: 15
+      CHAT_ALLOWED_MIME_TYPES: image/,application/pdf,text/plain,audio/,video/
+      CLOUDINARY_CLOUD_NAME: ""
+      CLOUDINARY_API_KEY: ""
+      CLOUDINARY_API_SECRET: ""
+      CLOUDINARY_CHAT_FOLDER: chat_uploads
+      AI_ASSISTANT_EMAIL: ai-assistant@local
+      OPENAI_API_KEY: ""
+      OPENAI_MODEL: gpt-4.1-mini
+      REDIS_URL: ""
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: http://localhost:5000/api
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

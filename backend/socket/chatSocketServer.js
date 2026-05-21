@@ -102,6 +102,14 @@ const registerTyping = ({ io, roomId, userId, userName }) => {
 const getAiAssistantUser = async () => {
   const aiEmail = process.env.AI_ASSISTANT_EMAIL || 'ai-assistant@local';
   let aiUser = await User.findOne({ email: aiEmail }).select('_id name email role');
+  const invalidAiUser =
+    aiUser &&
+    (String(aiUser.name || '').trim().toLowerCase() !== 'ai assistant' || String(aiUser.role || '') !== 'ai_assistant');
+  if (invalidAiUser) {
+    throw new Error(
+      `AI assistant email conflict: ${aiEmail} belongs to "${aiUser.name}". Set AI_ASSISTANT_EMAIL to a dedicated AI account email.`
+    );
+  }
   if (!aiUser) {
     const randomSecret = `ai-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const hashed = await bcrypt.hash(randomSecret, 10);
@@ -109,7 +117,7 @@ const getAiAssistantUser = async () => {
       name: 'AI Assistant',
       email: aiEmail,
       password: hashed,
-      role: 'team_member',
+      role: 'ai_assistant',
     });
   }
   return aiUser;
@@ -195,6 +203,7 @@ export const initializeChatSocket = (httpServer, { corsOrigin }) => {
           encryptedContent = '',
           encryptedKeys = {},
           iv = '',
+          plainPrompt = '',
           parentMessageId = null,
           fileUrl = '',
           fileName = '',
@@ -215,6 +224,30 @@ export const initializeChatSocket = (httpServer, { corsOrigin }) => {
         const room = await getAuthorizedRoom({ roomId, userId });
         if (!room) {
           return socket.emit('socketError', { message: 'Forbidden: room access denied' });
+        }
+
+        let aiContext = null;
+        if (room.type === 'ai') {
+          const aiUser = await getAiAssistantUser();
+          const memberIds = [...new Set((room.members || []).map((id) => toStringId(id)))];
+          const hasSender = memberIds.includes(toStringId(userId));
+          const hasAiUser = memberIds.includes(toStringId(aiUser._id));
+          if (memberIds.length !== 2 || !hasSender || !hasAiUser) {
+            return socket.emit('socketError', {
+              message: 'Invalid AI room membership. AI room must contain exactly the user and AI assistant.',
+            });
+          }
+          if (type !== 'text') {
+            return socket.emit('socketError', { message: 'AI chat only supports text messages.' });
+          }
+          if (fileUrl || fileName || Number(fileSize || 0) > 0 || mimeType) {
+            return socket.emit('socketError', { message: 'AI chat does not allow file or voice payloads.' });
+          }
+          const resolvedPrompt = String(plainPrompt || '').trim();
+          if (!resolvedPrompt) {
+            return socket.emit('socketError', { message: 'plainPrompt is required for encrypted AI chat.' });
+          }
+          aiContext = { aiUser, prompt: resolvedPrompt };
         }
 
         assertValidFilePayload({ fileUrl, fileSize, mimeType, type });
@@ -254,27 +287,33 @@ export const initializeChatSocket = (httpServer, { corsOrigin }) => {
           metadata: { roomId, type },
         });
 
-        if (room.type === 'ai') {
-          const aiUser = await getAiAssistantUser();
-          if (toStringId(aiUser._id) !== toStringId(userId)) {
-            const aiText = await generateAiResponse({
-              roomId,
-              userName: socket.user.name,
-              prompt: '[encrypted payload]',
+        if (aiContext && toStringId(aiContext.aiUser._id) !== toStringId(userId)) {
+          const aiText = await generateAiResponse({
+            roomId,
+            userName: socket.user.name,
+            prompt: aiContext.prompt,
+          });
+          const recipients = await User.find(
+            { _id: { $in: room.members }, rsaPublicKey: { $exists: true, $ne: '' } },
+            '_id rsaPublicKey'
+          ).lean();
+          const aiEncrypted = encryptForRecipients({ plainText: aiText, recipients });
+          if (!aiEncrypted?.encryptedContent || !aiEncrypted?.iv || !aiEncrypted?.encryptedKeys) {
+            return socket.emit('socketError', { message: 'Failed to encrypt AI response payload.' });
+          }
+          if (!aiEncrypted.encryptedKeys[toStringId(userId)]) {
+            return socket.emit('socketError', {
+              message: 'Cannot deliver encrypted AI response: missing recipient key for current user.',
             });
-            const recipients = await User.find(
-              { _id: { $in: room.members }, rsaPublicKey: { $exists: true, $ne: '' } },
-              '_id rsaPublicKey'
-            ).lean();
-            const aiEncrypted = encryptForRecipients({ plainText: aiText, recipients });
+          }
             const aiMessage = await Message.create({
               chatRoomId: roomId,
-              senderId: aiUser._id,
+              senderId: aiContext.aiUser._id,
               type: 'text',
               encryptedContent: aiEncrypted.encryptedContent,
               encryptedKeys: aiEncrypted.encryptedKeys,
               iv: aiEncrypted.iv,
-              readBy: [{ userId: aiUser._id, readAt: new Date() }],
+              readBy: [{ userId: aiContext.aiUser._id, readAt: new Date() }],
               searchTokens: ['ai', 'assistant', 'summary'],
             });
             const hydratedAi = await Message.findById(aiMessage._id).populate('senderId', 'name email role');
@@ -286,7 +325,6 @@ export const initializeChatSocket = (httpServer, { corsOrigin }) => {
               performedBy: userId,
               metadata: { roomId },
             });
-          }
         }
       } catch (error) {
         socket.emit('socketError', { message: error.message });

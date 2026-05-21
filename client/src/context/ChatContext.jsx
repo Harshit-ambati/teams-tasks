@@ -223,6 +223,7 @@ export function ChatProvider({ children }) {
         encryptedContent: encrypted.encryptedContent,
         encryptedKeys: encrypted.encryptedKeys,
         iv: encrypted.iv,
+        plainPrompt: room?.type === 'ai' ? String(plainText || '') : '',
         parentMessageId: extra.parentMessageId || null,
         fileUrl: extra.fileUrl || '',
         fileName: extra.fileName || '',
@@ -235,10 +236,6 @@ export function ChatProvider({ children }) {
           .filter(Boolean)
           .slice(0, 25),
       });
-
-      if (room?.type === 'ai') {
-        chatApi.getAiCompletion({ roomId, prompt: plainText }).catch(() => {});
-      }
     },
     [rooms, fetchRoomKeys]
   );
@@ -356,4 +353,3 @@ export function ChatProvider({ children }) {
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 }
-

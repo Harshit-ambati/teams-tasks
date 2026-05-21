@@ -187,12 +187,16 @@ function ProjectsPage() {
   const role = user?.role || 'team_member';
   const canCreateProject = ['admin', 'project_manager'].includes(role);
   const canViewProjectLogs = ['admin', 'project_manager'].includes(role);
+  const canUpdateProjectStatus = ['admin', 'project_manager'].includes(role);
 
-  const { projects, projectTeams, createProject, deleteProject, fetchProjectTeam } = useContext(ProjectContext);
+  const { projects, projectTeams, createProject, updateProject, deleteProject, fetchProjectTeam } = useContext(ProjectContext);
   const [projectRequests, setProjectRequests] = useState({});
   const [projectAuditLogs, setProjectAuditLogs] = useState({});
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [requestProject, setRequestProject] = useState(null);
+  const [statusDraftByProject, setStatusDraftByProject] = useState({});
+  const [statusSavingByProject, setStatusSavingByProject] = useState({});
+  const [statusErrorByProject, setStatusErrorByProject] = useState({});
 
   useEffect(() => {
     projects.forEach((project) => {
@@ -220,6 +224,25 @@ function ProjectsPage() {
       }
     });
   }, [projects, fetchProjectTeam, canViewProjectLogs]);
+
+  const handleStatusUpdate = async (project) => {
+    const nextStatus = statusDraftByProject[project._id] || project.status;
+    if (!nextStatus || nextStatus === project.status) return;
+
+    setStatusErrorByProject((prev) => ({ ...prev, [project._id]: '' }));
+    setStatusSavingByProject((prev) => ({ ...prev, [project._id]: true }));
+
+    try {
+      await updateProject(project._id, { status: nextStatus });
+    } catch (error) {
+      setStatusErrorByProject((prev) => ({
+        ...prev,
+        [project._id]: error.message || 'Failed to update status',
+      }));
+    } finally {
+      setStatusSavingByProject((prev) => ({ ...prev, [project._id]: false }));
+    }
+  };
 
   return (
     <div className="projects-page">
@@ -254,6 +277,13 @@ function ProjectsPage() {
           const team = projectTeams[project._id];
           const requests = projectRequests[project._id] || [];
           const logs = projectAuditLogs[project._id] || [];
+          const draftStatus = statusDraftByProject[project._id] || project.status;
+          const isSavingStatus = Boolean(statusSavingByProject[project._id]);
+          const statusError = statusErrorByProject[project._id] || '';
+          const canManageThisProject =
+            role === 'admin' ||
+            (role === 'project_manager' && (!project.owner || String(project.owner) === String(user?._id)));
+
           return (
             <article key={project._id} className={`project-card ${project.status}`}>
               <div className="project-header">
@@ -262,6 +292,35 @@ function ProjectsPage() {
               </div>
               <p className="project-desc">{project.description}</p>
               <p className="project-members">Team members: {team?.members?.length || 0}</p>
+              {canUpdateProjectStatus && canManageThisProject && (
+                <div className="project-status-control">
+                  <p className="project-team-title">Update Status</p>
+                  <div className="status-control-row">
+                    <select
+                      value={draftStatus}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setStatusDraftByProject((prev) => ({ ...prev, [project._id]: value }));
+                        setStatusErrorByProject((prev) => ({ ...prev, [project._id]: '' }));
+                      }}
+                      disabled={isSavingStatus}
+                    >
+                      <option value="planning">Planning</option>
+                      <option value="active">Active</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => handleStatusUpdate(project)}
+                      disabled={isSavingStatus || draftStatus === project.status}
+                    >
+                      {isSavingStatus ? 'Saving...' : 'Update'}
+                    </button>
+                  </div>
+                  {statusError && <p className="form-error">{statusError}</p>}
+                </div>
+              )}
               <div className="project-team-section">
                 <p className="project-team-title">Dynamic Project Team</p>
                 <div className="project-team-list">

@@ -4,6 +4,17 @@ import { departmentApi } from '../api/departmentApi';
 import { userApi } from '../api/userApi';
 import { getCurrentUser } from '../utils/authStorage';
 
+const getUserInitials = (name) => {
+  const cleanName = (name || '').trim();
+  if (!cleanName) return 'U';
+  const parts = cleanName.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+};
+
+const getMemberAvatar = (member) =>
+  member?.profilePic || member?.avatar || member?.photo || member?.image || '';
+
 function DepartmentModal({ users, onClose, onSubmit, initial = null }) {
   const [name, setName] = useState(initial?.name || '');
   const [leader, setLeader] = useState(initial?.leader?._id || initial?.leader || '');
@@ -155,7 +166,18 @@ function TeamsPage() {
             <div className="team-members-preview">
               {(department.members || []).slice(0, 5).map((member) => (
                 <span key={member._id} className="member-chip">
-                  {member.name}
+                  {getMemberAvatar(member) ? (
+                    <img
+                      src={getMemberAvatar(member)}
+                      alt={member.name || 'Member'}
+                      className="member-avatar"
+                    />
+                  ) : (
+                    <span className="member-avatar member-avatar-fallback" aria-hidden>
+                      {getUserInitials(member?.name)}
+                    </span>
+                  )}
+                  <span className="member-chip-name">{member.name}</span>
                 </span>
               ))}
             </div>

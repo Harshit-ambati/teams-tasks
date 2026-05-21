@@ -16,6 +16,7 @@ const serializeUser = (user) => ({
   name: user.name,
   email: user.email,
   role: user.role,
+  profilePic: user.profilePic || '',
 });
 
 export const registerUser = async (req, res) => {

@@ -8,8 +8,8 @@ export const getDepartments = async (req, res) => {
     }
 
     const departments = await Department.find(query)
-      .populate('leader', 'name email')
-      .populate('members', 'name email');
+      .populate('leader', 'name email profilePic')
+      .populate('members', 'name email profilePic');
 
     return res.status(200).json(departments);
   } catch (error) {
@@ -31,8 +31,8 @@ export const createDepartment = async (req, res) => {
     });
 
     const hydrated = await Department.findById(department._id)
-      .populate('leader', 'name email role')
-      .populate('members', 'name email role');
+      .populate('leader', 'name email role profilePic')
+      .populate('members', 'name email role profilePic');
 
     return res.status(201).json(hydrated);
   } catch (error) {
@@ -51,8 +51,8 @@ export const updateDepartment = async (req, res) => {
       new: true,
       runValidators: true,
     })
-      .populate('leader', 'name email role')
-      .populate('members', 'name email role');
+      .populate('leader', 'name email role profilePic')
+      .populate('members', 'name email role profilePic');
 
     if (!department) return res.status(404).json({ message: 'Department not found' });
     return res.status(200).json(department);

@@ -22,8 +22,13 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'project_manager', 'department_leader', 'team_leader', 'team_member'],
+      enum: ['admin', 'project_manager', 'department_leader', 'team_leader', 'team_member', 'ai_assistant'],
       default: 'team_member',
+    },
+    profilePic: {
+      type: String,
+      default: '',
+      trim: true,
     },
     rsaPublicKey: {
       type: String,

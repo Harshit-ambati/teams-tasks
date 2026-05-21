@@ -144,6 +144,7 @@
 .teams-page .member-chip {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   max-width: 100%;
   font-size: 0.74rem;
   color: #dbeafe;
@@ -154,6 +155,29 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.teams-page .member-chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.teams-page .member-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.teams-page .member-avatar-fallback {
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.85), rgba(99, 102, 241, 0.85));
 }
 
 .teams-page .member-chip.more {
